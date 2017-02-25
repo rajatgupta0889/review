@@ -24,6 +24,10 @@ module.exports = {
     isSensitive: {
       type: 'boolean',
       defaultsTo: false
+    },
+    expresses: {
+      collection: 'express',
+      via: 'vent'
     }
   }
 };

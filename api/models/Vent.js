@@ -26,7 +26,7 @@ module.exports = {
       defaultsTo: false
     },
     expresses: {
-      collection: 'express',
+      collection: 'emotions',
       via: 'vent'
     }
   }

@@ -9,6 +9,10 @@ module.exports = {
 
   attributes: {
 
+
+    vent:{
+      model : 'vent'
+    }
   }
 };
 

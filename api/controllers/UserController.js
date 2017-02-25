@@ -6,6 +6,17 @@
  */
 
 module.exports = {
+	addUser: function(req, res){
+		var data = req.body;
+		console.log("Data in req body",data);
+		User.add(data, function(err, result){
+			if(err){
+				res.negotiate(err);
+			}else{
+				res.json(result);
+			}
+		});
+	}
 	
 };
 

@@ -56,6 +56,23 @@ module.exports = {
     loginType: {
       type: 'string'
     }
-  }
-};
+  },
 
+
+
+add: function(user, cb){
+
+        // sails.log.debug('points models', user_id, event);
+        User.create(user,function(err,newUser){
+            if(!err){
+                console.log("User created ",newUser);
+                cb(null,newUser);
+            }
+            else
+                cb(err);
+
+        });
+
+    }
+
+};

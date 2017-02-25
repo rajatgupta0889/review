@@ -30,6 +30,7 @@ module.exports = {
       collection: 'emotions',
       via: 'ventinfo'
     }
+
   },
 
   doUpload: function (request, callBack) {

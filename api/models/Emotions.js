@@ -9,17 +9,17 @@ module.exports = {
   attributes: {
     emotionValue: {
       type: 'integer',
-      enum: [0, 1, 2, 3, 4, 5, 6],
-      defaultsTo: 0
+      enum: [1, 2, 3, 4],
+      defaultsTo: 1
     },
     emotionMessage: {
       type: 'string',
-      enum: ["", "Like", "Love", "HaHa", "Wow", "Sad", "Angry"],
-      defaultsTo: ""
+      enum: ["Like", "HaHa", "Sad", "Angry"],
+      defaultsTo: "Like"
     },
 
-    userId:{
-      model:'user'
+    userId: {
+      model: 'user'
     },
 
     vent: {
@@ -37,7 +37,7 @@ module.exports = {
           message: "No Vent found"
         }, null);
       } else {
-        User.findOne({id: request.userId}).exec(function (error,userData) {
+        User.findOne({id: request.userId}).exec(function (error, userData) {
           if (error) {
             callBack(error, null);
           } else if (!userData) {
@@ -53,8 +53,8 @@ module.exports = {
               var payload = {
                 userId: request.userId,
                 vent: request.ventId,
-                emotionValue:request.emotion.emotionValue,
-                emotionMessage:request.emotion.emotionMessage
+                emotionValue: request.emotion.emotionValue,
+                emotionMessage: request.emotion.emotionMessage
               };
               if (error) {
                 callBack(error, null);

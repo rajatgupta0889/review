@@ -23,6 +23,20 @@ module.exports = {
     }
   },
 
+  getMyVentCount:function (request, response) {
+    if (!request.query.userId) {
+      response.status(400).json({status: 400, message: "ERROR! userId is missing"});
+    } else {
+      Vent.getMyTotalVentCount(request.query, function (error, ventCount) {
+        if (error) {
+          response.status(error.status).json({error: error});
+        } else {
+          response.json(ventCount);
+        }
+      });
+    }
+  },
+
   getMyVents: function (request, response) {
     if (!request.query.userId) {
       response.status(400).json({status: 400, message: "ERROR! userId is missing"});

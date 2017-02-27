@@ -63,6 +63,7 @@ module.exports.routes = {
    * Vent APIS *
    ****************/
   'POST /vent/api/uploadVent': 'VentController.uploadVent',
+  'GET /vent/api/getMyVentCount': 'VentController.getMyVentCount',
   'GET /vent/api/getMyVents': 'VentController.getMyVents',
   'GET /vent/api/getAllVents': 'VentController.getAllVents',
   'DELETE /vent/api/deleteVent': 'VentController.deleteVent',

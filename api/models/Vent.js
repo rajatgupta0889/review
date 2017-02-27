@@ -28,7 +28,7 @@ module.exports = {
 
     emotion: {
       collection: 'emotions',
-      via: 'ventinfo'
+      via: 'vent'
     }
 
   },

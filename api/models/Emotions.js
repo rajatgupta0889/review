@@ -16,7 +16,7 @@ module.exports = {
       type: 'string'
     },
 
-    ventinfo: {
+    vent: {
       model: 'vent'
     }
   },

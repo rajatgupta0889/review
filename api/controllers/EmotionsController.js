@@ -14,8 +14,12 @@ module.exports = {
       response.status(400).json({status: 400, message: "ERROR! parameter User Id is missing"});
     } else if (!request.body.ventinfo) {
       response.status(400).json({status: 400, message: "ERROR! parameter vent id is missing"});
-    } else if (!request.body.express) {
-      response.status(400).json({status: 400, message: "ERROR! parameter Express value is missing"});
+    } else if (!request.body.emotion) {
+      response.status(400).json({status: 400, message: "ERROR! parameter Emotion Object is missing"});
+    } else if (!request.body.emotion.emotionValue) {
+      response.status(400).json({status: 400, message: "ERROR! parameter Emotion value is missing"});
+    } else if (!request.body.emotion.emotionMessage) {
+      response.status(400).json({status: 400, message: "ERROR! parameter Emotion message is missing"});
     } else {
       Emotions.doAddEmotion(request.body, function (error, userData) {
         if (error) {

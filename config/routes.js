@@ -23,15 +23,16 @@
 module.exports.routes = {
 
   /***************************************************************************
-  *                                                                          *
-  * Make the view located at `views/homepage.ejs` (or `views/homepage.jade`, *
-  * etc. depending on your default view engine) your home page.              *
-  *                                                                          *
-  * (Alternatively, remove this and add an `index.html` file in your         *
-  * `assets` directory)                                                      *
-  *                                                                          *
-  ***************************************************************************/
+   *                                                                          *
+   * Make the view located at `views/homepage.ejs` (or `views/homepage.jade`, *
+   * etc. depending on your default view engine) your home page.              *
+   *                                                                          *
+   * (Alternatively, remove this and add an `index.html` file in your         *
+   * `assets` directory)                                                      *
+   *                                                                          *
+   ***************************************************************************/
 
+<<<<<<< HEAD
   // '/': {
   //   view: 'homepage'
   // }
@@ -44,14 +45,33 @@ module.exports.routes = {
   'GET   /user/forgotPassword'        :   'UserController.forgotPassword',
   'POST   /user/changePassword'        :   'UserController.changePassword',
   'POST   /user/otpAuth'        :   'UserController.otpAuth',
-  /***************************************************************************
-  *                                                                          *
-  * Custom routes here...                                                    *
-  *                                                                          *
-  *  If a request to a URL doesn't match any of the custom routes above, it  *
-  * is matched against Sails route blueprints. See `config/blueprints.js`    *
-  * for configuration options and examples.                                  *
-  *                                                                          *
-  ***************************************************************************/
+=======
+  '/': {
+    view: 'homepage'
+  },
 
+>>>>>>> 25edeb2470394e832e4a6f11f2e667621b35d386
+  /***************************************************************************
+   *                                                                          *
+   * Custom routes here...                                                    *
+   *                                                                          *
+   *  If a request to a URL doesn't match any of the custom routes above, it  *
+   * is matched against Sails route blueprints. See `config/blueprints.js`    *
+   * for configuration options and examples.                                  *
+   *                                                                          *
+   ***************************************************************************/
+
+
+  /****************
+   * Vent APIS *
+   ****************/
+  'POST /vent/api/uploadVent': 'VentController.uploadVent',
+
+  'GET /vent/api/getMyVents': 'VentController.getMyVents',
+  'GET /vent/api/getAllVents': 'VentController.getAllVents',
+
+  'DELETE /vent/api/deleteVent': 'VentController.deleteVent',
+
+  'POST /vent/api/addEmotion': 'EmotionsController.addEmotion',
+  'DELETE /vent/api/removeEmotion': 'EmotionsController.removeEmotion'
 };

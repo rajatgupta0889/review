@@ -66,6 +66,10 @@ module.exports.routes = {
   'GET /vent/api/getMyVents': 'VentController.getMyVents',
   'GET /vent/api/getAllVents': 'VentController.getAllVents',
   'DELETE /vent/api/deleteVent': 'VentController.deleteVent',
+
+  /****************
+   * Emotion APIS *
+   ****************/
   'POST /vent/api/addEmotion': 'EmotionsController.addEmotion',
   'DELETE /vent/api/removeEmotion': 'EmotionsController.removeEmotion'
 

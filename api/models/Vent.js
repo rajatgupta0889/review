@@ -34,65 +34,77 @@ module.exports = {
   },
 
   doUpload: function (request, callBack) {
-    Vent.create(request, function (error, userData) {
+    Vent.create(request, function (error, ventData) {
       if (error) {
         callBack(error, null);
       } else {
-        callBack(null, userData);
+        callBack(null, ventData);
       }
     });
   },
 
   getMyVentList: function (request, callBack) {
-    Vent.find({user: request.userId}).populateAll().exec(function (error, userData) {
-      if (error) {
-        callBack(error, null);
-      } else if (!userData) {
-        callBack({
-          status: 400,
-          message: "No User found"
-        }, null);
-      } else {
-        callBack(null, userData);
-      }
-    });
+    Vent.find({
+      createdAt: {'<': request.createdAt},
+      user: request.userId
+    })
+      .limit(10)
+      .sort('createdAt DESC')
+      .populateAll()
+      .exec(
+        function (error, ventData) {
+          if (error) {
+            callBack(error, null);
+          } else if (!ventData) {
+            callBack({
+              status: 400,
+              message: "No Vent found"
+            }, null);
+          } else {
+            callBack(null, ventData);
+          }
+        });
   },
 
   getAllVentList: function (request, callBack) {
-    Vent.find().populateAll().exec(function (error, userData) {
+    Vent.find({
+      createdAt: {'<': request.createdAt}
+    }).limit(10)
+      .sort('createdAt DESC')
+      .populateAll().exec(function (error, ventData) {
       if (error) {
         callBack(error, null);
-      } else if (!userData) {
-        callBack({
-          status: 400,
-          message: "No User found"
-        }, null);
-      } else {
-        callBack(null, userData);
-      }
-    });
-  },
-
-  doDeleteVent: function (request, callBack) {
-    Vent.findOne({id: request.userId, id: request.ventId}).exec(function (error, userData) {
-      if (error) {
-        callBack(error, null);
-      } else if (!userData) {
+      } else if (!ventData) {
         callBack({
           status: 400,
           message: "No Vent found"
         }, null);
       } else {
-        Vent.destroy({userId: request.userId, id: request.ventId}).exec(function (error, userData) {
+        callBack(null, ventData);
+      }
+    });
+  },
+
+  doDeleteVent: function (request, callBack) {
+    Vent.findOne({user: request.userId, id: request.ventId}).exec(function (error, ventData) {
+      if (error) {
+        callBack(error, null);
+      } else if (!ventData) {
+        callBack({
+          status: 400,
+          message: "No Vent found"
+        }, null);
+      } else {
+        Vent.destroy({user: request.userId, id: request.ventId}).exec(function (error, ventData) {
           if (error) {
             callBack(error, null);
-          } else if (!userData) {
+          } else if (!ventData) {
             callBack({
               status: 400,
-              message: "No User found"
+              message: "No Vent found"
             }, null);
           } else {
-            callBack(null, userData[0]);
+            callBack(null, ventData[0]);
           }
         });
       }

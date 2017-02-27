@@ -32,10 +32,25 @@ module.exports.routes = {
    *                                                                          *
    ***************************************************************************/
 
+<<<<<<< HEAD
+  // '/': {
+  //   view: 'homepage'
+  // }
+  'POST   /user/add'        :   'UserController.addUser',
+  'POST   /user/updateProfile'        :   'UserController.updateProfile',
+  'GET   /user/getProfile/:id?'        :   'UserController.getProfile',
+  'DELETE   /user/delete'        :   'UserController.deleteUser',
+  'POST   /user/login'        :   'UserController.login',
+  'GET   /user/logout'        :   'UserController.logout',
+  'GET   /user/forgotPassword'        :   'UserController.forgotPassword',
+  'POST   /user/changePassword'        :   'UserController.changePassword',
+  'POST   /user/otpAuth'        :   'UserController.otpAuth',
+=======
   '/': {
     view: 'homepage'
   },
 
+>>>>>>> 25edeb2470394e832e4a6f11f2e667621b35d386
   /***************************************************************************
    *                                                                          *
    * Custom routes here...                                                    *

@@ -6,14 +6,20 @@
  */
 
 module.exports = {
-
   attributes: {
-    expressValue: {
-      type: 'string'
+    emotionValue: {
+      type: 'integer',
+      enum: [0, 1, 2, 3, 4, 5, 6],
+      defaultsTo: 0
+    },
+    emotionMessage: {
+      type: 'string',
+      enum: ["", "Like", "Love", "HaHa", "Wow", "Sad", "Angry"],
+      defaultsTo: ""
     },
 
-    expressMsg: {
-      type: 'string'
+    userId:{
+      model:'user'
     },
 
     vent: {
@@ -22,82 +28,108 @@ module.exports = {
   },
 
   doAddEmotion: function (request, callBack) {
-    Vent.findOne({id: request.ventinfo}).populateAll().exec(function (error, userData) {
+    Vent.findOne({id: request.ventId}).exec(function (error, ventData) {
       if (error) {
         callBack(error, null);
-      } else if (!userData) {
+      } else if (!ventData) {
         callBack({
           status: 400,
           message: "No Vent found"
         }, null);
       } else {
-        Emotions.findOne({
-          userId: request.userId,
-          ventinfo: request.ventinfo
-        }).populateAll().exec(function (error, userData) {
-          if (error) {
-            callBack(error, null);
-          } else if (!userData) {
-            Emotions.create(request, function (error, updateData) {
-              if (error) {
-                callBack(error, null);
-              } else {
-                callBack(null, updateData);
-              }
-            });
-          } else {
-            Emotions.update({
-              userId: request.userId,
-              ventinfo: request.ventinfo
-            }, request, function (error, updateData) {
-              if (error) {
-                callBack(error, null);
-              } else {
-                callBack(null, updateData);
-              }
-            });
-          }
-        });
-
-      }
-    });
-  },
-
-  doRemoveEmotion: function (request, callBack) {
-    Vent.findOne({id: request.ventinfo}).populateAll().exec(function (error, userData) {
-      if (error) {
-        callBack(error, null);
-      } else if (!userData) {
-        callBack({
-          status: 400,
-          message: "No Vent found"
-        }, null);
-      } else {
-        Emotions.findOne({
-          userId: request.userId,
-          ventinfo: request.ventinfo
-        }).populateAll().exec(function (error, userData) {
+        User.findOne({id: request.userId}).exec(function (error,userData) {
           if (error) {
             callBack(error, null);
           } else if (!userData) {
             callBack({
               status: 400,
-              message: "No Vent found"
+              message: "No User found"
             }, null);
           } else {
-            Emotions.destroy({
+            Emotions.findOne({
               userId: request.userId,
-              ventinfo: request.ventinfo
-            }).exec(function (error, updateData) {
+              vent: request.ventId
+            }).exec(function (error, emotionData) {
+              var payload = {
+                userId: request.userId,
+                vent: request.ventId,
+                emotionValue:request.emotion.emotionValue,
+                emotionMessage:request.emotion.emotionMessage
+              };
               if (error) {
                 callBack(error, null);
+              } else if (!emotionData) {
+                Emotions.create(payload, function (error, updateData) {
+                  if (error) {
+                    callBack(error, null);
+                  } else {
+                    callBack(null, updateData);
+                  }
+                });
               } else {
-                callBack(null, updateData);
+                Emotions.update({
+                  userId: request.userId,
+                  vent: request.ventId
+                }, payload, function (error, updateData) {
+                  if (error) {
+                    callBack(error, null);
+                  } else {
+                    callBack(null, updateData);
+                  }
+                });
               }
             });
           }
         });
+      }
+    });
+  },
 
+  doRemoveEmotion: function (request, callBack) {
+    Vent.findOne({id: request.ventId}).exec(function (error, ventData) {
+      if (error) {
+        callBack(error, null);
+      } else if (!ventData) {
+        callBack({
+          status: 400,
+          message: "No Vent found"
+        }, null);
+      } else {
+        User.findOne({id: request.userId}).exec(function (error, userData) {
+          if (error) {
+            callBack(error, null);
+          } else if (!userData) {
+            callBack({
+              status: 400,
+              message: "No User found"
+            }, null);
+          } else {
+            Emotions.findOne({
+              userId: request.userId,
+              vent: request.ventId
+            }).exec(function (error, emotionData) {
+              if (error) {
+                callBack(error, null);
+              } else if (!emotionData) {
+                callBack({
+                  status: 400,
+                  message: "No Emotion found"
+                }, null);
+              } else {
+                Emotions.destroy({
+                  userId: request.userId,
+                  vent: request.ventId
+                }).exec(function (error, destroyData) {
+                  if (error) {
+                    callBack(error, null);
+                  } else {
+                    callBack(null, destroyData);
+                  }
+                });
+              }
+            });
+          }
+        });
       }
     });
   }

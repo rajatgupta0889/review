@@ -32,9 +32,9 @@ module.exports.routes = {
    *                                                                          *
    ***************************************************************************/
 
-  '/': {
-    view: 'homepage'
-  },
+  // '/': {
+  //   view: 'homepage'
+  // }
 
   /***************************************************************************
    *                                                                          *
@@ -46,17 +46,32 @@ module.exports.routes = {
    *                                                                          *
    ***************************************************************************/
 
+  /****************
+   * USER APIS *
+   ****************/
+  'POST   /user/add': 'UserController.addUser',
+  'POST   /user/updateProfile': 'UserController.updateProfile',
+  'GET   /user/getProfile/:id?': 'UserController.getProfile',
+  'DELETE   /user/delete': 'UserController.deleteUser',
+  'POST   /user/login': 'UserController.login',
+  'GET   /user/logout': 'UserController.logout',
+  'GET   /user/forgotPassword': 'UserController.forgotPassword',
+  'POST   /user/changePassword': 'UserController.changePassword',
+  'POST   /user/otpAuth': 'UserController.otpAuth',
 
   /****************
    * Vent APIS *
    ****************/
   'POST /vent/api/uploadVent': 'VentController.uploadVent',
-
+  'GET /vent/api/getMyVentCount': 'VentController.getMyVentCount',
   'GET /vent/api/getMyVents': 'VentController.getMyVents',
   'GET /vent/api/getAllVents': 'VentController.getAllVents',
-
   'DELETE /vent/api/deleteVent': 'VentController.deleteVent',
 
+  /****************
+   * Emotion APIS *
+   ****************/
   'POST /vent/api/addEmotion': 'EmotionsController.addEmotion',
   'DELETE /vent/api/removeEmotion': 'EmotionsController.removeEmotion'
+
 };

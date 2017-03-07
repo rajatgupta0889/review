@@ -64,7 +64,7 @@ module.exports = {
     },
     loginType: {
       type: 'string',
-      enum: ['facebook', 'simple'],
+      enum: ['facebook', 'simple','google'],
       defaultsTo: 'simple'
     },
     isVerified: {
@@ -78,15 +78,15 @@ module.exports = {
 add: function(user, cb){
 
         // sails.log.debug('points models', user_id, event);
-        User.create(user,function(err,newUser){
-            if(!err){
-                console.log("User created ",newUser);
-                cb(null,newUser);
-            }
-            else
-                cb(err);
+        if(user.loginType==='facebook'){
 
-        });
+          createUser(user,cb);
+        }
+        else if(user.loginType==='google'){
+          createUser(user,cb);
+        }
+        else
+          cb({message:"invalid login type",status:"failure"});
 
     },
 
@@ -233,3 +233,30 @@ add: function(user, cb){
     },
 
 };
+
+
+function createUser(user, cb){
+  sails.log.debug("inside create: ",user);
+     User.findOne({"email": user.email}, function(err,foundUser){
+          if(!err){
+            if(foundUser){
+             sails.log.debug('user found ' ,foundUser);
+             cb(null,foundUser);
+           }else{
+              cb({message:"user can not be created",status:400});
+           }
+          }
+          else{
+            user.isVerified=true;
+             User.create(user,function(err,newUser){
+              if(!err){
+                console.log("User created ",newUser);
+                cb(null,newUser);
+              }
+              else
+                cb(err);
+            });
+          }
+      });
+
+    }

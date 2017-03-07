@@ -9,11 +9,18 @@ module.exports = {
 	addUser: function(req, res){
 		var data = req.body;
 		console.log("Data in req body",data);
-		User.add(data, function(err, result){
+		User.add(data, function(err, user){
 			if(err){
 				res.negotiate(err);
 			}else{
-				res.json(result);
+				sails.log.debug("User is : ", user);
+				Token.sendToken(user, function(err, tokenDetail){
+					if(!err){
+						res.json(user);
+					}else{
+						res.negotiate(err);
+					}
+				});
 			}
 		});
 	},

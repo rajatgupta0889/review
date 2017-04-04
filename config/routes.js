@@ -57,7 +57,8 @@ module.exports.routes = {
   'GET   /user/logout': 'UserController.logout',
   'GET   /user/forgotPassword': 'UserController.forgotPassword',
   'POST   /user/changePassword': 'UserController.changePassword',
-  'POST   /user/otpAuth': 'UserController.otpAuth',
+  'POST   /user/verifyOTP': 'UserController.verifyOTP',
+  'POST   /user/signup': 'UserController.signup',
 
   /****************
    * Vent APIS *

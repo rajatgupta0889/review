@@ -106,6 +106,30 @@ module.exports = {
 			}
 		});
 	},
+
+	signup: function(req, res){
+		var mobile = req.body.mobile;
+		console.log("Data in req body",mobile);
+		User.signup(mobile, function(err, result){
+			if(err){
+				res.negotiate(err);
+			}else{
+				res.json(result);
+			}
+		});
+	},
+
+	verifyOTP: function(req, res){
+		var user = req.body;
+		console.log("Data in req body",user);
+		User.verifyOTP(user, function(err, result){
+			if(err){
+				res.negotiate(err);
+			}else{
+				res.json(result);
+			}
+		});
+	},
 	
 };
 

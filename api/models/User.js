@@ -70,6 +70,9 @@ module.exports = {
     isVerified: {
       type: 'boolean',
       defaultsTo: false
+    },
+    otp: {
+      type: 'int'
     }
   },
 
@@ -232,11 +235,52 @@ add: function(user, cb){
       }
     },
 
+
+    signup: function(mobile, cb){
+        User.findOne({"mobile": mobile}, function(err,foundUser){
+          if(!err){
+            if(foundUser){
+             sails.log.debug('user found ' ,foundUser);
+              generateOTP(foundUser,cb);
+           }else{
+              var user = {};
+              user.mobile = mobile;
+
+              User.create(user,function(err,newUser){
+              if(!err){
+                console.log("User created ",newUser);
+                generateOTP(newUser,cb);
+              }
+              else
+                cb(err);
+            });
+           }
+          }
+      });
+    },
+
+    verifyOTP: function(user, cb){
+        if(user){
+        User.findOne({"mobile": user.mobile}, function(err,foundUser){
+          if(!err){
+            sails.log.debug('user found ' ,foundUser);
+            if(foundUser.otp == user.otp){
+              cb(null, foundUser);
+            }else{
+              cb({message: "OTP is not valid", status:401});
+            }
+          }else{
+            cb(err);
+          }
+        });
+      }
+    }
+
 };
 
 
 function createUser(user, cb){
-  sails.log.debug("inside create: ",user);
+  //sails.log.debug("inside create: ",user);
      User.findOne({"email": user.email}, function(err,foundUser){
           if(!err){
             if(foundUser){
@@ -259,4 +303,20 @@ function createUser(user, cb){
           }
       });
 
+    }
+
+    function generateOTP(user,cb){
+
+      var otp = Math.floor(Math.random() * 9000) + 1000;
+      //send otp
+      //sendOTP(otp);
+      user.otp = otp;
+      User.updateProfile(user,function(err,updatedUser){
+        if(!err){
+          cb(null,updatedUser);
+        }
+        else{
+          cb(err);
+        }
+      });
     }

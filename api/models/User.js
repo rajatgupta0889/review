@@ -70,6 +70,9 @@ module.exports = {
     isVerified: {
       type: 'boolean',
       defaultsTo: false
+    },
+    fcmToken:{
+      type:'string'
     }
   },
 
@@ -109,7 +112,7 @@ add: function(user, cb){
 
              sails.log.debug('user found ' ,users);
              cb(null,users);
-            
+
           }else{
             cb(err);
           }
@@ -142,7 +145,7 @@ add: function(user, cb){
     User.findOne({id: user.id}).exec(function (error, user){
       if(error){
         return cb(error);
-        
+
       }
       if(!user)    //puppies dying in this line!!!!
         return cb({msg: "User does not exist."});
@@ -155,8 +158,8 @@ add: function(user, cb){
       return cb(null, {msg: "User have now been deleted."});
     });
     });
-  
-    
+
+
   },
 
   login: function(cred, cb){
@@ -201,7 +204,7 @@ add: function(user, cb){
             cb(err);
           }
         });
-      
+
     },
 
     changePassword: function(cred, cb){

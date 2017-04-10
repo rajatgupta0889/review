@@ -72,6 +72,11 @@ module.exports.routes = {
    * Emotion APIS *
    ****************/
   'POST /vent/api/addEmotion': 'EmotionsController.addEmotion',
-  'DELETE /vent/api/removeEmotion': 'EmotionsController.removeEmotion'
+  'DELETE /vent/api/removeEmotion': 'EmotionsController.removeEmotion',
+
+  /****************
+   * Notification APIS *
+   ****************/
+  'GET /vent/api/sendNotificationToUser': 'NotificationController.sendNotificationToUser',
 
 };

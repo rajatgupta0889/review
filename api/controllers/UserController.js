@@ -9,11 +9,18 @@ module.exports = {
 	addUser: function(req, res){
 		var data = req.body;
 		console.log("Data in req body",data);
-		User.add(data, function(err, result){
+		User.add(data, function(err, user){
 			if(err){
 				res.negotiate(err);
 			}else{
-				res.json(result);
+				sails.log.debug("User is : ", user);
+				Token.sendToken(user, function(err, tokenDetail){
+					if(!err){
+						res.json(user);
+					}else{
+						res.negotiate(err);
+					}
+				});
 			}
 		});
 	},
@@ -92,6 +99,30 @@ module.exports = {
 		var cred = req.body;
 		console.log("Data in req body",cred);
 		User.changePassword(cred, function(err, result){
+			if(err){
+				res.negotiate(err);
+			}else{
+				res.json(result);
+			}
+		});
+	},
+
+	signup: function(req, res){
+		var mobile = req.body.mobile;
+		console.log("Data in req body",mobile);
+		User.signup(mobile, function(err, result){
+			if(err){
+				res.negotiate(err);
+			}else{
+				res.json(result);
+			}
+		});
+	},
+
+	verifyOTP: function(req, res){
+		var user = req.body;
+		console.log("Data in req body",user);
+		User.verifyOTP(user, function(err, result){
 			if(err){
 				res.negotiate(err);
 			}else{

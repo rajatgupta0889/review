@@ -79,9 +79,50 @@ module.exports = {
     }
   },
 
-
   add: function (user, cb) {
 
+    // sails.log.debug('points models', user_id, event);
+    if (user.loginType === 'facebook') {
+
+      createUser(user, cb);
+    }
+    else if (user.loginType === 'google') {
+      createUser(user, cb);
+    }
+    else
+      cb({message: "invalid login type", status: "failure"});
+
+  },
+
+  getProfile: function (id, cb) {
+
+    //sails.log.debug("Start time ", new Date());
+    if (id) {
+      User.findOne({"id": id}, function (err, user) {
+        if (!err) {
+          sails.log.debug('user found ', user);
+          cb(null, user);
+        } else {
+          cb(err);
+        }
+      });
+    }
+    else {
+      User.find().exec(function (err, users) {
+        if (!err) {
+
+          sails.log.debug('user found ', users);
+          cb(null, users);
+
+        } else {
+          cb(err);
+        }
+
+      });
+    }
+  },
+
+  updateProfile: function (user, cb) {
     // sails.log.debug('points models', user_id, event);
     if (user.loginType === 'facebook') {
 
@@ -136,11 +177,8 @@ module.exports = {
       } else {
         cb(err);
       }
-
     });
-
   },
-
 
   deleteUser: function (user, cb) {
 
@@ -237,7 +275,6 @@ module.exports = {
     }
   },
 
-
   signup: function (mobile, cb) {
     User.findOne({"mobile": mobile}, function (err, foundUser) {
       if (!err) {
@@ -260,6 +297,7 @@ module.exports = {
       }
     });
   },
+
 
   verifyOTP: function (user, cb) {
     if (user) {
@@ -292,21 +330,10 @@ function createUser(user, cb) {
         cb({message: "user can not be created", status: 400});
       }
     }
-    else {
-      user.isVerified = true;
-      User.create(user, function (err, newUser) {
-        if (!err) {
-          console.log("User created ", newUser);
-          cb(null, newUser);
-        }
-        else
-          cb(err);
-      });
-    }
+
   });
 
 }
-
 function generateOTP(user, cb) {
 
   var otp = Math.floor(Math.random() * 9000) + 1000;

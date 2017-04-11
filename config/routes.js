@@ -69,6 +69,8 @@ module.exports.routes = {
   'GET /vent/api/getAllVents': 'VentController.getAllVents',
   'DELETE /vent/api/deleteVent': 'VentController.deleteVent',
 
+  'GET  /vent/api/searchVent' : 'VentController.searchVent',
+
   /****************
    * Emotion APIS *
    ****************/
@@ -79,5 +81,4 @@ module.exports.routes = {
    * Notification APIS *
    ****************/
   'GET /vent/api/sendNotificationToUser': 'NotificationController.sendNotificationToUser',
-
 };

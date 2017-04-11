@@ -114,7 +114,13 @@ module.exports = {
 			if(err){
 				res.negotiate(err);
 			}else{
-				res.json(result);
+        Token.sendToken(user, function(err, tokenDetail){
+          if(!err){
+            res.json(user);
+          }else{
+            res.negotiate(err);
+          }
+        });
 			}
 		});
 	},
@@ -130,6 +136,6 @@ module.exports = {
 			}
 		});
 	},
-	
+
 };
 

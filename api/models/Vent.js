@@ -54,6 +54,43 @@ module.exports = {
     });
   },
 
+  afterCreate: function (demo, cb) {
+
+    var doc = demo;
+    sails.log("vent  :", doc);
+    SearchService.index(doc, {id: doc.id, type: "vent"}, function (err, indexDoc) {
+      if (err) {
+        sails.log.error('ES: vent index error', err);
+      } else {
+        sails.log.debug('ES: vent indexed.', indexDoc);
+      }
+    });
+    cb();
+
+  },
+
+  searchVent: function (request, callBack) {
+
+    var options = {};
+
+    var query = {
+      "query": {
+        "match": {
+          "text": request.ventMsg
+        }
+      }
+    };
+
+    SearchService.search(options, query, true, function (error, searchData) {
+      if (!error)
+        callBack(null, searchData);
+      else {
+        callBack(error);
+      }
+    });
+
+  },
+
   getMyTotalVentCount: function (request, callBack) {
     User.findOne({id: request.userId}).exec(function (error, userData) {
       if (error) {
@@ -91,31 +128,46 @@ module.exports = {
         } else {
           var ventLength = ventData.length;
           for (var i = 0; i < ventLength; i++) {
-            var Like = 0;
-            var HaHa = 0;
-            var Sad = 0;
-            var Angry = 0;
-            var emotionLength = ventData[i].emotion.length;
-            for (var j = 0; j < emotionLength; j++) {
-              var item = ventData[i].emotion[j].emotionValue;
-              if (item == 1) {
-                ++Like;
-              } else if (item == 2) {
-                ++HaHa;
-              } else if (item == 3) {
-                ++Sad;
-              } else if (item == 4) {
-                ++Angry;
-              }
-            }
-            ventData[i].like = Like;
-            ventData[i].haha = HaHa;
-            ventData[i].sad = Sad;
-            ventData[i].angry = Angry;
+            Vent.getEmotionCount(ventData[i], function (emotionObject) {
+              ventData[i].emotionCounts = emotionObject;
+            });
           }
           callBack(null, ventData);
         }
       });
+  },
+
+  getEmotionCount: function (ventData, emotionObject) {
+    ventData.user.userId = ventData.user.id;
+    delete ventData.user.id;
+
+    ventData.ventId = ventData.id;
+    delete ventData.id;
+
+    var Like = 0;
+    var HaHa = 0;
+    var Sad = 0;
+    var Angry = 0;
+    var emotionLength = ventData.emotion.length;
+    for (var j = 0; j < emotionLength; j++) {
+      var item = ventData.emotion[j].emotionValue;
+      if (item == 1) {
+        ++Like;
+      } else if (item == 2) {
+        ++HaHa;
+      } else if (item == 3) {
+        ++Sad;
+      } else if (item == 4) {
+        ++Angry;
+      }
+    }
+    var emotionCounts = {
+      like: Like,
+      haha: HaHa,
+      sad: Sad,
+      angry: Angry
+    };
+    emotionObject(emotionCounts);
   },
 
   getAllVentList: function (request, callBack) {
@@ -130,27 +182,13 @@ module.exports = {
       } else {
         var ventLength = ventData.length;
         for (var i = 0; i < ventLength; i++) {
-          var Like = 0;
-          var HaHa = 0;
-          var Sad = 0;
-          var Angry = 0;
-          var emotionLength = ventData[i].emotion.length;
-          for (var j = 0; j < emotionLength; j++) {
-            var item = ventData[i].emotion[j].emotionValue;
-            if (item == 1) {
-              ++Like;
-            } else if (item == 2) {
-              ++HaHa;
-            } else if (item == 3) {
-              ++Sad;
-            } else if (item == 4) {
-              ++Angry;
-            }
+          Vent.getEmotionCount(ventData[i], function (emotionObject) {
+            ventData[i].emotionCounts = emotionObject;
+          });
+
+          if (ventData[i].isAnonymous) {
+            delete ventData[i].user;
           }
-          ventData[i].like = Like;
-          ventData[i].haha = HaHa;
-          ventData[i].sad = Sad;
-          ventData[i].angry = Angry;
         }
         callBack(null, ventData);
       }

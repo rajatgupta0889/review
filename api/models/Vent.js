@@ -138,11 +138,11 @@ module.exports = {
   },
 
   getEmotionCount: function (ventData, emotionObject) {
-    ventData.user.userId = ventData.user.id;
-    delete ventData.user.id;
-
-    ventData.ventId = ventData.id;
-    delete ventData.id;
+    // ventData.user.userId = ventData.user.id;
+    // delete ventData.user.id;
+    //
+    // ventData.ventId = ventData.id;
+    // delete ventData.id;
 
     var Like = 0;
     var HaHa = 0;

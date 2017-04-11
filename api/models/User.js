@@ -16,7 +16,7 @@ module.exports = {
       unique: true
     },
     mobile: {
-      type: 'integer',
+      type: 'string',
       unique: true
     },
     fakeName: {
@@ -77,63 +77,6 @@ module.exports = {
     fcmToken: {
       type: 'string'
     }
-  },
-
-  add: function (user, cb) {
-
-    // sails.log.debug('points models', user_id, event);
-    if (user.loginType === 'facebook') {
-
-      createUser(user, cb);
-    }
-    else if (user.loginType === 'google') {
-      createUser(user, cb);
-    }
-    else
-      cb({message: "invalid login type", status: "failure"});
-
-  },
-
-  getProfile: function (id, cb) {
-
-    //sails.log.debug("Start time ", new Date());
-    if (id) {
-      User.findOne({"id": id}, function (err, user) {
-        if (!err) {
-          sails.log.debug('user found ', user);
-          cb(null, user);
-        } else {
-          cb(err);
-        }
-      });
-    }
-    else {
-      User.find().exec(function (err, users) {
-        if (!err) {
-
-          sails.log.debug('user found ', users);
-          cb(null, users);
-
-        } else {
-          cb(err);
-        }
-
-      });
-    }
-  },
-
-  updateProfile: function (user, cb) {
-    // sails.log.debug('points models', user_id, event);
-    if (user.loginType === 'facebook') {
-
-      createUser(user, cb);
-    }
-    else if (user.loginType === 'google') {
-      createUser(user, cb);
-    }
-    else
-      cb({message: "invalid login type", status: "failure"});
-
   },
 
   getProfile: function (id, cb) {
@@ -202,22 +145,6 @@ module.exports = {
 
   },
 
-  login: function (cred, cb) {
-    if (cred) {
-      User.findOne({"fakeName": cred.fakeName}, function (err, user) {
-        if (!err) {
-          sails.log.debug('user found ', user);
-          if (user.password == cred.password) {
-            active = true;
-            cb(null, user);
-          }
-        } else {
-          cb(err);
-        }
-      });
-    }
-  },
-
   logout: function (id, cb) {
     if (id) {
       User.findOne({"id": id}, function (err, user) {
@@ -232,48 +159,6 @@ module.exports = {
     }
   },
 
-  forgotPassword: function (fakeName, cb) {
-    User.findOne({"fakeName": fakeName}, function (err, user) {
-      if (!err) {
-        sails.log.debug('user found ', user);
-        if (user.isVerified) {
-          //otpAuth();
-          cb(null, user);
-        }
-      } else {
-        cb(err);
-      }
-    });
-
-  },
-
-  changePassword: function (cred, cb) {
-    if (cred) {
-      User.findOne({"fakeName": cred.fakeName}, function (err, user) {
-        if (!err) {
-          sails.log.debug('user found ', user);
-
-          if (!cred.oldPassword || user.password == cred.oldPassword) {
-            user.password = cred.newPassword;
-            User.update({"id": user.id}, user, function (err, updatedUser) {
-              if (!err) {
-                if (user.length == 0) {
-                  cb({message: "User is not found", status: 400});
-                } else {
-                  sails.log.debug('user found', updatedUser);
-                  cb(null, updatedUser[0]);
-                }
-              } else {
-                cb(err);
-              }
-            });
-          }
-        } else {
-          cb(err);
-        }
-      });
-    }
-  },
 
   signup: function (mobile, cb) {
     User.findOne({"mobile": mobile}, function (err, foundUser) {
@@ -336,7 +221,8 @@ function createUser(user, cb) {
 }
 function generateOTP(user, cb) {
 
-  var otp = Math.floor(Math.random() * 9000) + 1000;
+  // var otp = Math.floor(Math.random() * 9000) + 1000;
+  var otp = 0000;
   //send otp
   //sendOTP(otp);
   user.otp = otp;
@@ -349,3 +235,4 @@ function generateOTP(user, cb) {
     }
   });
 }
+

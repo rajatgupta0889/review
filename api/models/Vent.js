@@ -58,13 +58,13 @@ module.exports = {
 
     var doc = demo;
     sails.log("vent  :", doc);
-    // SearchService.index(doc, {id: doc.id, type: "vent"}, function (err, indexDoc) {
-    //   if (err) {
-    //     sails.log.error('ES: vent index error', err);
-    //   } else {
-    //     sails.log.debug('ES: vent indexed.', indexDoc);
-    //   }
-    // });
+    SearchService.index(doc, {id: doc.id, type: "vent"}, function (err, indexDoc) {
+      if (err) {
+        sails.log.error('ES: vent index error', err);
+      } else {
+        sails.log.debug('ES: vent indexed.', indexDoc);
+      }
+    });
     cb();
 
   },
@@ -81,13 +81,13 @@ module.exports = {
       }
     };
 
-    // SearchService.search(options, query, true, function (error, searchData) {
-    //   if (!error)
-    //     callBack(null, searchData);
-    //   else {
-    //     callBack(error);
-    //   }
-    // });
+    SearchService.search(options, query, true, function (error, searchData) {
+      if (!error)
+        callBack(null, searchData);
+      else {
+        callBack(error);
+      }
+    });
 
   },
 

@@ -110,7 +110,7 @@ module.exports = {
 	signup: function(req, res){
 		var mobile = req.body.mobile;
 		console.log("Data in req body",mobile);
-		User.signup(mobile, function(err, result){
+		User.signup(mobile, function(err, user){
 			if(err){
 				res.negotiate(err);
 			}else{
@@ -121,6 +121,7 @@ module.exports = {
             res.negotiate(err);
           }
         });
+				// res.json(result);
 			}
 		});
 	},

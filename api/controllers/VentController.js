@@ -23,7 +23,7 @@ module.exports = {
     }
   },
 
-  getMyVentCount:function (request, response) {
+  getMyVentCount: function (request, response) {
     if (!request.query.userId) {
       response.status(400).json({status: 400, message: "ERROR! userId is missing"});
     } else {
@@ -76,6 +76,20 @@ module.exports = {
           response.json({
             message: "Vent Deleted Successfully"
           });
+        }
+      });
+    }
+  },
+
+  searchVent: function (request, response) {
+    if (!request.query) {
+      response.status(400).json({status: 400, message: "ERROR! Query is empty"});
+    } else {
+      Vent.searchVent(request.query, function (error, ventList) {
+        if (error) {
+          response.status(error.status).json({error: error});
+        } else {
+          response.json(ventList);
         }
       });
     }

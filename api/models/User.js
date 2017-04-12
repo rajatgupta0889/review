@@ -17,7 +17,7 @@ module.exports = {
     },
     mobile: {
       type: 'string',
-      required:true,
+      required: true,
       unique: true
     },
     fakeName: {
@@ -78,15 +78,15 @@ module.exports = {
   },
 
   getProfile: function (id, cb) {
-    userExistsById(id, cb);
+    User.userExistsById(id, cb);
   },
 
   updateProfile: function (user, cb) {
-    updateUser(user, cb);
+    User.updateUser(user, cb);
   },
 
   deleteUser: function (user, cb) {
-    userExistsById(user.id, function (error, foundUser) {
+    User.userExistsById(user.id, function (error, foundUser) {
       if (error) {
         return cb(error);
 
@@ -107,7 +107,7 @@ module.exports = {
 
   logout: function (id, cb) {
     if (id) {
-      userExistsById(id, function (err, user) {
+      User.userExistsById(id, function (err, user) {
         if (!err) {
           sails.log.debug('user found ', user);
           user.active = false;
@@ -131,7 +131,7 @@ module.exports = {
       if (!err) {
         if (foundUser) {
           sails.log.debug('user found ', foundUser);
-          generateOTP(foundUser, cb);
+          User.generateOTP(foundUser, cb);
         } else {
           var user = {};
           user.mobile = mobile;
@@ -139,7 +139,7 @@ module.exports = {
           User.create(user, function (err, newUser) {
             if (!err) {
               console.log("User created ", newUser);
-              generateOTP(newUser, cb);
+              User.generateOTP(newUser, cb);
             }
             else
               cb(err);
@@ -159,7 +159,7 @@ module.exports = {
             foundUser.isVerified = true;
             foundUser.active = true;
             cb(null, foundUser);
-            updateUser(user, function (err, user) {
+            User.updateUser(user, function (err, user) {
               if (!err) {
                 sails.log.debug("user is updated successfully");
               } else {
@@ -174,59 +174,59 @@ module.exports = {
         }
       });
     }
+  },
+  userExistsById: function (id, cb) {
+    //sails.log.debug("inside create: ",user);
+    User.findOne({"id": id}, function (err, foundUser) {
+      if (!err) {
+        if (foundUser) {
+          sails.log.debug('user found ', foundUser);
+          cb(null, foundUser);
+        } else {
+          cb({message: "User does not exist", status: 400});
+        }
+      }
+    });
+  },
+  updateUser: function (user, cb) {
+    User.update({"id": user.id}, user, function (err, updatedUser) {
+      if (!err) {
+        if (user.length == 0) {
+          cb({message: "User is not found", status: 400});
+        } else {
+          sails.log.debug('user found', updatedUser);
+          cb(null, updatedUser[0]);
+        }
+      } else {
+        if (err.invalidAttributes) {
+          cb({message: "Fake Name Already exist", status: 400});
+        } else {
+          cb(err);
+        }
+      }
+    });
+  },
+  generateOTP: function (user, cb) {
+
+    // var otp = Math.floor(Math.random() * 9000) + 1000;
+    var otp = '0000';
+    //send otp
+    //sendOTP(otp);
+    user.otp = otp;
+
+    User.updateProfile(user, function (err, updatedUser) {
+      if (!err) {
+        delete updatedUser.otp
+        cb(null, updatedUser);
+      }
+      else {
+        cb(err);
+      }
+    });
   }
 
 };
 
-function userExistsById(id, cb) {
-  //sails.log.debug("inside create: ",user);
-  User.findOne({"id": id}, function (err, foundUser) {
-    if (!err) {
-      if (foundUser) {
-        sails.log.debug('user found ', foundUser);
-        cb(null, foundUser);
-      } else {
-        cb({message: "User does not exist", status: 400});
-      }
-    }
-  });
-}
 
-function updateUser(user, cb) {
-  User.update({"id": user.id}, user, function (err, updatedUser) {
-    if (!err) {
-      if (user.length == 0) {
-        cb({message: "User is not found", status: 400});
-      } else {
-        sails.log.debug('user found', updatedUser);
-        cb(null, updatedUser[0]);
-      }
-    } else {
-      if (err.invalidAttributes){
-        cb({message: "Fake Name Already exist", status: 400});
-      }else{
-        cb(err);
-      }
-    }
-  });
-}
 
-function generateOTP(user, cb) {
-
-  // var otp = Math.floor(Math.random() * 9000) + 1000;
-  var otp = '0000';
-  //send otp
-  //sendOTP(otp);
-  user.otp = otp;
-
-  User.updateProfile(user, function (err, updatedUser) {
-    if (!err) {
-      delete updatedUser.otp
-      cb(null, updatedUser);
-    }
-    else {
-      cb(err);
-    }
-  });
-}
 

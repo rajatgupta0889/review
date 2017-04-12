@@ -62,14 +62,7 @@ module.exports = {
       if (err) {
         res.negotiate(err);
       } else {
-        Token.sendToken(user, function (err, tokenDetail) {
-          if (!err) {
-            res.json(user);
-          } else {
-            res.negotiate(err);
-          }
-        });
-        // res.json(result);
+        res.json(user);
       }
     });
   },
@@ -77,11 +70,17 @@ module.exports = {
   verifyOTP: function (req, res) {
     var user = req.body;
     console.log("Data in req body", user);
-    User.verifyOTP(user, function (err, result) {
+    User.verifyOTP(user, function (err, user) {
       if (err) {
         res.negotiate(err);
       } else {
-        res.json(result);
+        Token.sendToken(user, function (err, tokenDetail) {
+          if (!err) {
+            res.json(user);
+          } else {
+            res.negotiate(err);
+          }
+        });
       }
     });
   },

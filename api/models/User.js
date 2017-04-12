@@ -17,6 +17,7 @@ module.exports = {
     },
     mobile: {
       type: 'string',
+      required:true,
       unique: true
     },
     fakeName: {
@@ -201,7 +202,11 @@ function updateUser(user, cb) {
         cb(null, updatedUser[0]);
       }
     } else {
-      cb(err);
+      if (error.invalidAttributes){
+        cb({message: "Fake Name Already exist", status: 400});
+      }else{
+        cb(err);
+      }
     }
   });
 }

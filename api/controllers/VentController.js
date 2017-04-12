@@ -11,7 +11,7 @@ module.exports = {
     var userId = request.user_details.id;
     Vent.doUpload(request.body, userId, function (error, userData) {
       if (error) {
-        response.status(error.status).json({error: error});
+        response.negotiate(error);
       } else {
         userData.ventId = userData.id;
         delete userData.id;
@@ -24,7 +24,7 @@ module.exports = {
     var userId = request.user_details.id;
     Vent.getMyTotalVentCount(userId, function (error, ventCount) {
       if (error) {
-        response.status(error.status).json({error: error});
+        response.negotiate(error);
       } else {
         response.json(ventCount);
       }
@@ -35,7 +35,7 @@ module.exports = {
     var userId = request.user_details.id;
     Vent.getMyVentList(request.query, userId, function (error, userList) {
       if (error) {
-        response.status(error.status).json({error: error});
+        response.negotiate(error);
       } else {
         response.json(userList);
       }
@@ -45,7 +45,7 @@ module.exports = {
   getAllVents: function (request, response) {
     Vent.getAllVentList(request.query, function (error, userList) {
       if (error) {
-        response.status(error.status).json({error: error});
+        response.negotiate(error);
       } else {
         response.json(userList);
       }
@@ -56,7 +56,7 @@ module.exports = {
     var userId = request.user_details.id;
     Vent.doDeleteVent(request.body, userId, function (error, userData) {
       if (error) {
-        response.status(error.status).json({error: error});
+        response.negotiate(error);
       } else {
         response.json({
           message: "Vent Deleted Successfully"

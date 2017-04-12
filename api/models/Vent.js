@@ -49,6 +49,17 @@ module.exports = {
             callBack(error, null);
           } else {
             callBack(null, ventData);
+            sails.log.debug("ventData : ", ventData);
+            User.userExistsById(ventData.user, function (error, userData) {
+              sails.log.debug("userData : ", userData);
+              if (userData) {
+                userData.ventCount = userData.ventCount + 1;
+                sails.log.debug("userData : ", userData);
+                User.updateUser(userData, function (error, updateUserData) {
+                  sails.log.debug("updateUserData :", updateUserData);
+                });
+              }
+            });
           }
         });
       }

@@ -27,7 +27,7 @@ module.exports = {
     }
   },
 
-  doAddEmotion: function (request, callBack) {
+  doAddEmotion: function (request, userId, callBack) {
     Vent.findOne({id: request.ventId}).exec(function (error, ventData) {
       if (error) {
         callBack(error, null);
@@ -37,7 +37,7 @@ module.exports = {
           message: "No Vent found"
         }, null);
       } else {
-        User.findOne({id: request.userId}).exec(function (error, userData) {
+        User.findOne({id: userId}).exec(function (error, userData) {
           if (error) {
             callBack(error, null);
           } else if (!userData) {
@@ -47,11 +47,11 @@ module.exports = {
             }, null);
           } else {
             Emotions.findOne({
-              userId: request.userId,
+              userId: userId,
               vent: request.ventId
             }).exec(function (error, emotionData) {
               var payload = {
-                userId: request.userId,
+                userId: userId,
                 vent: request.ventId,
                 emotionValue: request.emotion.emotionValue,
                 emotionMessage: request.emotion.emotionMessage
@@ -63,19 +63,19 @@ module.exports = {
                   if (error) {
                     callBack(error, null);
                   } else {
-                    Emotions.notifyUser(updateData, ventData);
+                    // Emotions.notifyUser(updateData, ventData);
                     callBack(null, updateData);
                   }
                 });
               } else {
                 Emotions.update({
-                  userId: request.userId,
+                  userId: userId,
                   vent: request.ventId
                 }, payload, function (error, updateData) {
                   if (error) {
                     callBack(error, null);
                   } else {
-                    Emotions.notifyUser(updateData[0], ventData);
+                    // Emotions.notifyUser(updateData[0], ventData);
                     callBack(null, updateData[0]);
                   }
                 });
@@ -87,33 +87,33 @@ module.exports = {
     });
   },
 
-  notifyUser: function (updateData, ventData) {
-    sails.log.debug(ventData, updateData);
-    User.findOne({id: updateData.userId}).populateAll().exec(function (error, userData) {
-      var payload = {
-        notification: {
-          title: "Vent Out",
-          body: userData.name + " " + updateData.emotionMessage + " your Vent"
-        },
-        data: {
-          ventId: updateData.vent
-        }
-      };
-      User.findOne({id: ventData.user}).populateAll().exec(function (error, ventUserData) {
-        sails.log.debug(ventUserData);
-        NotificationService.sendToDevice(ventUserData.fcmToken, payload, null, function (error, response) {
-          if (error) {
-            console.log("Error sending message:", error);
-          } else {
-            console.log("Successfully sent message:", response);
-          }
-        });
-      });
+  // notifyUser: function (updateData, ventData) {
+  //   sails.log.debug(ventData, updateData);
+  //   User.findOne({id: updateData.userId}).populateAll().exec(function (error, userData) {
+  //     var payload = {
+  //       notification: {
+  //         title: "Vent Out",
+  //         body: userData.name + " " + updateData.emotionMessage + " your Vent"
+  //       },
+  //       data: {
+  //         ventId: updateData.vent
+  //       }
+  //     };
+  //     User.findOne({id: ventData.user}).populateAll().exec(function (error, ventUserData) {
+  //       sails.log.debug(ventUserData);
+  //       NotificationService.sendToDevice(ventUserData.fcmToken, payload, null, function (error, response) {
+  //         if (error) {
+  //           console.log("Error sending message:", error);
+  //         } else {
+  //           console.log("Successfully sent message:", response);
+  //         }
+  //       });
+  //     });
+  //
+  //   });
+  // },
 
-    });
-  },
-
-  doRemoveEmotion: function (request, callBack) {
+  doRemoveEmotion: function (request, userId, callBack) {
     Vent.findOne({id: request.ventId}).exec(function (error, ventData) {
       if (error) {
         callBack(error, null);
@@ -123,7 +123,7 @@ module.exports = {
           message: "No Vent found"
         }, null);
       } else {
-        User.findOne({id: request.userId}).exec(function (error, userData) {
+        User.findOne({id: userId}).exec(function (error, userData) {
           if (error) {
             callBack(error, null);
           } else if (!userData) {
@@ -133,7 +133,7 @@ module.exports = {
             }, null);
           } else {
             Emotions.findOne({
-              userId: request.userId,
+              userId: userId,
               vent: request.ventId
             }).exec(function (error, emotionData) {
               if (error) {
@@ -145,7 +145,7 @@ module.exports = {
                 }, null);
               } else {
                 Emotions.destroy({
-                  userId: request.userId,
+                  userId: userId,
                   vent: request.ventId
                 }).exec(function (error, destroyData) {
                   if (error) {

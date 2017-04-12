@@ -57,5 +57,10 @@ module.exports.policies = {
 
   VentController: {
     '*': ['sessionAuth']
-  }
+  },
+
+  EmotionsController: {
+    '*': ['sessionAuth']
+  },
+
 };

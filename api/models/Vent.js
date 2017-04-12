@@ -34,6 +34,7 @@ module.exports = {
   },
 
   doUpload: function (request, userId, callBack) {
+    request.user = userId;
     User.findOne({id: userId}).exec(function (error, userData) {
       if (error) {
         callBack(error, null);
@@ -91,7 +92,7 @@ module.exports = {
 
   },
 
-  getMyTotalVentCount: function (request, userId, callBack) {
+  getMyTotalVentCount: function (userId, callBack) {
     User.findOne({id: userId}).exec(function (error, userData) {
       if (error) {
         callBack(error, null);

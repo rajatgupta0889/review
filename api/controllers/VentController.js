@@ -22,7 +22,7 @@ module.exports = {
 
   getMyVentCount: function (request, response) {
     var userId = request.user_details.id;
-    Vent.getMyTotalVentCount(request.query, userId, function (error, ventCount) {
+    Vent.getMyTotalVentCount(userId, function (error, ventCount) {
       if (error) {
         response.status(error.status).json({error: error});
       } else {

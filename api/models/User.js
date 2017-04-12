@@ -81,11 +81,11 @@ module.exports = {
   },
 
   updateProfile: function (user, cb) {
-    updateUser(user, cb);
+    updateUser(user.id, cb);
   },
 
   deleteUser: function (user, cb) {
-    userExistsById(user, function (error, foundUser) {
+    userExistsById(user.id, function (error, foundUser) {
       if (error) {
         return cb(error);
 
@@ -177,9 +177,9 @@ module.exports = {
 
 };
 
-function userExistsById(user, cb) {
+function userExistsById(id, cb) {
   //sails.log.debug("inside create: ",user);
-  User.findOne({"id": user.id}, function (err, foundUser) {
+  User.findOne({"id": id}, function (err, foundUser) {
     if (!err) {
       if (foundUser) {
         sails.log.debug('user found ', foundUser);

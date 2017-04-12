@@ -51,7 +51,8 @@ module.exports.policies = {
 
   UserController: {
     getProfile: ['sessionAuth'],
-    updateProfile: ['sessionAuth']
+    updateProfile: ['sessionAuth'],
+    logout:['sessionAuth']
   },
 
   VentController: {

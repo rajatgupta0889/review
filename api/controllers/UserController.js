@@ -49,7 +49,7 @@ module.exports = {
   },
 
   logout: function (req, res) {
-    var id = req.param('id');
+    var id = req.user_details.id;
     User.logout(id, function (err, user) {
       if (err) {
         res.negotiate(err);

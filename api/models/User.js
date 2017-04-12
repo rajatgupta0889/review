@@ -72,7 +72,7 @@ module.exports = {
       defaultsTo: false
     },
     otp: {
-      type: 'int'
+      type: 'string'
     },
     fcmToken: {
       type: 'string'
@@ -204,25 +204,24 @@ module.exports = {
 };
 
 
-function createUser(user, cb) {
+function userExists(user, cb) {
   //sails.log.debug("inside create: ",user);
-  User.findOne({"email": user.email}, function (err, foundUser) {
+  User.findOne({"mobile": user.mobile}, function (err, foundUser) {
     if (!err) {
       if (foundUser) {
         sails.log.debug('user found ', foundUser);
         cb(null, foundUser);
       } else {
-        cb({message: "user can not be created", status: 400});
+        cb({message: "User does not exist", status: 400});
       }
     }
-
   });
-
 }
+
 function generateOTP(user, cb) {
 
   // var otp = Math.floor(Math.random() * 9000) + 1000;
-  var otp = 0000;
+  var otp = '0000';
   //send otp
   //sendOTP(otp);
   user.otp = otp;

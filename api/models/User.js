@@ -81,7 +81,7 @@ module.exports = {
   },
 
   updateProfile: function (user, cb) {
-    updateUser(user.id, cb);
+    updateUser(user, cb);
   },
 
   deleteUser: function (user, cb) {

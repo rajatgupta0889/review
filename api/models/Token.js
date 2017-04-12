@@ -38,7 +38,7 @@ module.exports = {
   },
 
   sendToken: function (userObj, cb) {
-    chkTokenExist(userObj.email, function (err, tokenDetail) {
+    chkTokenExist(userObj.mobile, function (err, tokenDetail) {
       if (!err) {
         if (tokenDetail && !tokenExpired(tokenDetail)) {
           userObj.token = {
@@ -97,8 +97,8 @@ function tokenExpired(tokenDetail) {
   }
 }
 
-function chkTokenExist(email, cb) {
-  Token.findOne({"user_details.email": email}, function (err, tokenDetail) {
+function chkTokenExist(mobile, cb) {
+  Token.findOne({"user_details.mobile": mobile}, function (err, tokenDetail) {
     return cb(err, tokenDetail);
   });
 }

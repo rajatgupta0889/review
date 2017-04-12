@@ -54,111 +54,76 @@ module.exports = {
       type: 'boolean',
       defaultsTo: false
     },
-    role: {
-      type: 'string',
-      defaultsTo: 'user'
-    },
+    // role: {
+    //   type: 'string',
+    //   defaultsTo: 'user'
+    // },
     isSensitiveMedia: {
       type: 'boolean',
       defaultsTo: false
     },
-    loginType: {
-      type: 'string',
-      enum: ['facebook', 'simple', 'google'],
-      defaultsTo: 'simple'
-    },
+    // loginType: {
+    //   type: 'string',
+    //   enum: ['facebook', 'simple', 'google'],
+    //   defaultsTo: 'simple'
+    // },
     isVerified: {
       type: 'boolean',
       defaultsTo: false
     },
     otp: {
       type: 'string'
-    },
-    fcmToken: {
-      type: 'string'
     }
   },
 
   getProfile: function (id, cb) {
-
-    //sails.log.debug("Start time ", new Date());
-    if (id) {
-      User.findOne({"id": id}, function (err, user) {
-        if (!err) {
-          sails.log.debug('user found ', user);
-          cb(null, user);
-        } else {
-          cb(err);
-        }
-      });
-    }
-    else {
-      User.find().exec(function (err, users) {
-        if (!err) {
-
-          sails.log.debug('user found ', users);
-          cb(null, users);
-
-        } else {
-          cb(err);
-        }
-
-      });
-    }
+    userExistsById(id, cb);
   },
 
   updateProfile: function (user, cb) {
-
-    User.update({"id": user.id}, user, function (err, updatedUser) {
-      if (!err) {
-        if (user.length == 0) {
-          cb({message: "User is not found", status: 400});
-        } else {
-          sails.log.debug('user found', updatedUser);
-          cb(null, updatedUser[0]);
-        }
-      } else {
-        cb(err);
-      }
-    });
+    updateUser(user, cb);
   },
 
   deleteUser: function (user, cb) {
-
-    User.findOne({id: user.id}).exec(function (error, user) {
+    userExistsById(user, function (error, foundUser) {
       if (error) {
         return cb(error);
 
       }
-      if (!user)    //puppies dying in this line!!!!
-        return cb({msg: "User does not exist."});
-
-      User.destroy({id: user.id}).exec(function (err) {
+      if (!foundUser)    //puppies dying in this line!!!!
+        cb({msg: "User does not exist."});
+      User.destroy({id: foundUser.id}).exec(function (err) {
         if (err) {
-          return cb(err);
+          cb(err);
         }
         sails.log('User have now been deleted.');
-        return cb(null, {msg: "User have now been deleted."});
+        cb(null, {msg: "User have now been deleted."});
       });
-    });
+    })
 
 
   },
 
   logout: function (id, cb) {
     if (id) {
-      User.findOne({"id": id}, function (err, user) {
+      userExistsById(id, function (err, user) {
         if (!err) {
           sails.log.debug('user found ', user);
-          active = false;
-          cb(null, {msg: "User has been logged out."});
+          user.active = false;
+          User.updateProfile(user, function (err, user) {
+            if (!err) {
+              cb(null, {msg: "User has been logged out."});
+            } else {
+              cb(err);
+            }
+          });
         } else {
           cb(err);
         }
       });
+
     }
   },
-
 
   signup: function (mobile, cb) {
     User.findOne({"mobile": mobile}, function (err, foundUser) {
@@ -190,7 +155,16 @@ module.exports = {
         if (!err) {
           sails.log.debug('user found ', foundUser);
           if (foundUser.otp == user.otp) {
+            foundUser.isVerified = true;
+            foundUser.active = true;
             cb(null, foundUser);
+            updateUser(user, function (err, user) {
+              if (!err) {
+                sails.log.debug("user is updated successfully");
+              } else {
+                sails.log.error(err);
+              }
+            });
           } else {
             cb({message: "OTP is not valid", status: 401});
           }
@@ -203,10 +177,9 @@ module.exports = {
 
 };
 
-
-function userExists(user, cb) {
+function userExistsById(user, cb) {
   //sails.log.debug("inside create: ",user);
-  User.findOne({"mobile": user.mobile}, function (err, foundUser) {
+  User.findOne({"id": user.id}, function (err, foundUser) {
     if (!err) {
       if (foundUser) {
         sails.log.debug('user found ', foundUser);
@@ -218,6 +191,21 @@ function userExists(user, cb) {
   });
 }
 
+function updateUser(user, cb) {
+  User.update({"id": user.id}, user, function (err, updatedUser) {
+    if (!err) {
+      if (user.length == 0) {
+        cb({message: "User is not found", status: 400});
+      } else {
+        sails.log.debug('user found', updatedUser);
+        cb(null, updatedUser[0]);
+      }
+    } else {
+      cb(err);
+    }
+  });
+}
+
 function generateOTP(user, cb) {
 
   // var otp = Math.floor(Math.random() * 9000) + 1000;
@@ -225,8 +213,10 @@ function generateOTP(user, cb) {
   //send otp
   //sendOTP(otp);
   user.otp = otp;
+
   User.updateProfile(user, function (err, updatedUser) {
     if (!err) {
+      delete updatedUser.otp
       cb(null, updatedUser);
     }
     else {

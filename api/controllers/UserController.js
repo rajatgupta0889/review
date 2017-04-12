@@ -10,6 +10,9 @@ module.exports = {
 
   getProfile: function (req, res) {
     var id = req.param('id');
+    if (!id) {
+      id = req.user_details.id;
+    }
     User.getProfile(id, function (err, users) {
       if (err) {
         res.negotiate(err);
@@ -17,6 +20,7 @@ module.exports = {
         res.json(users);
       }
     });
+
   },
 
   updateProfile: function (req, res) {

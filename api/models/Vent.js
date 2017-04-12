@@ -33,8 +33,8 @@ module.exports = {
 
   },
 
-  doUpload: function (request, callBack) {
-    User.findOne({id: request.user}).exec(function (error, userData) {
+  doUpload: function (request, userId, callBack) {
+    User.findOne({id: userId}).exec(function (error, userData) {
       if (error) {
         callBack(error, null);
       } else if (!userData) {
@@ -91,8 +91,8 @@ module.exports = {
 
   },
 
-  getMyTotalVentCount: function (request, callBack) {
-    User.findOne({id: request.userId}).exec(function (error, userData) {
+  getMyTotalVentCount: function (request, userId, callBack) {
+    User.findOne({id: userId}).exec(function (error, userData) {
       if (error) {
         callBack(error, null);
       } else if (!userData) {
@@ -101,7 +101,7 @@ module.exports = {
           message: "No User found"
         }, null);
       } else {
-        Vent.find({user: request.userId}).exec(function (error, ventData) {
+        Vent.find({user: userId}).exec(function (error, ventData) {
           if (error) {
             callBack(error, null);
           } else {
@@ -112,10 +112,16 @@ module.exports = {
     });
   },
 
-  getMyVentList: function (request, callBack) {
+  getMyVentList: function (request, userId, callBack) {
+
+    if (!request.createdAt) {
+      request.createdAt = new Date();
+      sails.log.debug(request);
+    }
+
     Vent.find({
       createdAt: {'<': request.createdAt},
-      user: request.userId
+      user: userId
     }).limit(10).sort('createdAt DESC').populateAll().exec(
       function (error, ventData) {
         if (error) {
@@ -138,12 +144,6 @@ module.exports = {
   },
 
   getEmotionCount: function (ventData, emotionObject) {
-    // ventData.user.userId = ventData.user.id;
-    // delete ventData.user.id;
-    //
-    // ventData.ventId = ventData.id;
-    // delete ventData.id;
-
     var Like = 0;
     var HaHa = 0;
     var Sad = 0;
@@ -171,6 +171,12 @@ module.exports = {
   },
 
   getAllVentList: function (request, callBack) {
+
+    if (!request.createdAt) {
+      request.createdAt = new Date();
+      sails.log.debug(request);
+    }
+
     Vent.find({createdAt: {'<': request.createdAt}}).limit(10).sort('createdAt DESC').populateAll().exec(function (error, ventData) {
       if (error) {
         callBack(error, null);
@@ -195,8 +201,8 @@ module.exports = {
     });
   },
 
-  doDeleteVent: function (request, callBack) {
-    Vent.findOne({user: request.userId, id: request.ventId}).exec(function (error, ventData) {
+  doDeleteVent: function (request, userId, callBack) {
+    Vent.findOne({user: userId, id: request.ventId}).exec(function (error, ventData) {
       if (error) {
         callBack(error, null);
       } else if (!ventData) {
@@ -205,7 +211,7 @@ module.exports = {
           message: "No Vent found"
         }, null);
       } else {
-        Vent.destroy({user: request.userId, id: request.ventId}).exec(function (error, ventData) {
+        Vent.destroy({user: userId, id: request.ventId}).exec(function (error, ventData) {
           if (error) {
             callBack(error, null);
           } else if (!ventData) {

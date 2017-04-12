@@ -8,47 +8,38 @@
 module.exports = {
 
   uploadVent: function (request, response) {
-    if (!request.body) {
-      response.status(400).json({status: 400, message: "ERROR! payload missing"});
-    } else {
-      Vent.doUpload(request.body, function (error, userData) {
-        if (error) {
-          response.status(error.status).json({error: error});
-        } else {
-          userData.ventId = userData.id;
-          delete userData.id;
-          response.json(userData);
-        }
-      });
-    }
+    var userId = request.user_details.id;
+    Vent.doUpload(request.body, userId, function (error, userData) {
+      if (error) {
+        response.status(error.status).json({error: error});
+      } else {
+        userData.ventId = userData.id;
+        delete userData.id;
+        response.json(userData);
+      }
+    });
   },
 
   getMyVentCount: function (request, response) {
-    if (!request.query.userId) {
-      response.status(400).json({status: 400, message: "ERROR! userId is missing"});
-    } else {
-      Vent.getMyTotalVentCount(request.query, function (error, ventCount) {
-        if (error) {
-          response.status(error.status).json({error: error});
-        } else {
-          response.json(ventCount);
-        }
-      });
-    }
+    var userId = request.user_details.id;
+    Vent.getMyTotalVentCount(request.query, userId, function (error, ventCount) {
+      if (error) {
+        response.status(error.status).json({error: error});
+      } else {
+        response.json(ventCount);
+      }
+    });
   },
 
   getMyVents: function (request, response) {
-    if (!request.query.userId) {
-      response.status(400).json({status: 400, message: "ERROR! userId is missing"});
-    } else {
-      Vent.getMyVentList(request.query, function (error, userList) {
-        if (error) {
-          response.status(error.status).json({error: error});
-        } else {
-          response.json(userList);
-        }
-      });
-    }
+    var userId = request.user_details.id;
+    Vent.getMyVentList(request.query, userId, function (error, userList) {
+      if (error) {
+        response.status(error.status).json({error: error});
+      } else {
+        response.json(userList);
+      }
+    });
   },
 
   getAllVents: function (request, response) {
@@ -62,23 +53,16 @@ module.exports = {
   },
 
   deleteVent: function (request, response) {
-    if (!request.body) {
-      response.status(400).json({status: 400, message: "ERROR! payload missing"});
-    } else if (!request.body.userId) {
-      response.status(400).json({status: 400, message: "ERROR! parameter User Id is missing"});
-    } else if (!request.body.ventId) {
-      response.status(400).json({status: 400, message: "ERROR! parameter vent Id is missing"});
-    } else {
-      Vent.doDeleteVent(request.body, function (error, userData) {
-        if (error) {
-          response.status(error.status).json({error: error});
-        } else {
-          response.json({
-            message: "Vent Deleted Successfully"
-          });
-        }
-      });
-    }
+    var userId = request.user_details.id;
+    Vent.doDeleteVent(request.body, userId, function (error, userData) {
+      if (error) {
+        response.status(error.status).json({error: error});
+      } else {
+        response.json({
+          message: "Vent Deleted Successfully"
+        });
+      }
+    });
   },
 
   searchVent: function (request, response) {

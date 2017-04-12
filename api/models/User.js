@@ -46,7 +46,9 @@ module.exports = {
       type: 'string'
     },
     ventCount: {
-      type: 'integer'
+      type: 'integer',
+      defaultsTo: 0
+
     },
     passcode: {
       type: 'string'

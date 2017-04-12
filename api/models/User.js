@@ -202,7 +202,7 @@ function updateUser(user, cb) {
         cb(null, updatedUser[0]);
       }
     } else {
-      if (error.invalidAttributes){
+      if (err.invalidAttributes){
         cb({message: "Fake Name Already exist", status: 400});
       }else{
         cb(err);

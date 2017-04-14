@@ -147,8 +147,9 @@ module.exports = {
           var ventLength = ventData.length;
           for (var i = 0; i < ventLength; i++) {
             Vent.getEmotionCount(ventData[i], function (emotionObject) {
-              ventData[i].emotionCounts = emotionObject;
+              ventData[i].emotionObject = emotionObject;
             });
+            ventData[i].emotion.length=0;
           }
           callBack(null, ventData);
         }
@@ -156,13 +157,20 @@ module.exports = {
   },
 
   getEmotionCount: function (ventData, emotionObject) {
+    var userId = ventData.user.id;
     var Like = 0;
     var HaHa = 0;
     var Sad = 0;
     var Angry = 0;
+    var myEmotionValue = "";
+    var myEmotionMessage = 0;
     var emotionLength = ventData.emotion.length;
     for (var j = 0; j < emotionLength; j++) {
       var item = ventData.emotion[j].emotionValue;
+      if (ventData.emotion[j].userId == userId) {
+        myEmotionValue = ventData.emotion[j].emotionValue;
+        myEmotionMessage = ventData.emotion[j].emotionMessage;
+      }
       if (item == 1) {
         ++Like;
       } else if (item == 2) {
@@ -173,13 +181,17 @@ module.exports = {
         ++Angry;
       }
     }
-    var emotionCounts = {
+    var emotion = {
       like: Like,
       haha: HaHa,
       sad: Sad,
-      angry: Angry
+      angry: Angry,
+      myEmotion: {
+        "emotionValue": myEmotionValue,
+        "emotionMessage": myEmotionMessage
+      }
     };
-    emotionObject(emotionCounts);
+    emotionObject(emotion);
   },
 
   getAllVentList: function (request, callBack) {
@@ -201,13 +213,14 @@ module.exports = {
         var ventLength = ventData.length;
         for (var i = 0; i < ventLength; i++) {
           Vent.getEmotionCount(ventData[i], function (emotionObject) {
-            ventData[i].emotionCounts = emotionObject;
+            ventData[i].emotionObject = emotionObject;
           });
-
           if (ventData[i].isAnonymous) {
             delete ventData[i].user;
           }
+          ventData[i].emotion.length=0;
         }
+
         callBack(null, ventData);
       }
     });

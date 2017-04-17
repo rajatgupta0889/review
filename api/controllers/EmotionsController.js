@@ -20,7 +20,7 @@ module.exports = {
 
   removeEmotion: function (request, response) {
     var userId = request.user_details.id;
-    Emotions.doRemoveEmotion(request.body, userId, function (error, userData) {
+    Emotions.doRemoveEmotion(request.query, userId, function (error, userData) {
       if (error) {
         response.negotiate(error);
       } else {

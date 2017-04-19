@@ -43,7 +43,8 @@ module.exports = {
   },
 
   getAllVents: function (request, response) {
-    Vent.getAllVentList(request.query, function (error, userList) {
+    var userId = request.user_details.id;
+    Vent.getAllVentList(request.query, userId, function (error, userList) {
       if (error) {
         response.negotiate(error);
       } else {

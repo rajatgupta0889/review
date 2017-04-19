@@ -146,18 +146,17 @@ module.exports = {
         } else {
           var ventLength = ventData.length;
           for (var i = 0; i < ventLength; i++) {
-            Vent.getEmotionCount(ventData[i], function (emotionObject) {
+            Vent.getEmotionCount(ventData[i], userId, function (emotionObject) {
               ventData[i].emotionObject = emotionObject;
             });
-            ventData[i].emotion.length=0;
+            ventData[i].emotion.length = 0;
           }
           callBack(null, ventData);
         }
       });
   },
 
-  getEmotionCount: function (ventData, emotionObject) {
-    var userId = ventData.user.id;
+  getEmotionCount: function (ventData, userId, emotionObject) {
     var Like = 0;
     var HaHa = 0;
     var Sad = 0;
@@ -194,7 +193,7 @@ module.exports = {
     emotionObject(emotion);
   },
 
-  getAllVentList: function (request, callBack) {
+  getAllVentList: function (request, userId, callBack) {
 
     if (!request.createdAt) {
       request.createdAt = new Date();
@@ -212,15 +211,15 @@ module.exports = {
       } else {
         var ventLength = ventData.length;
         for (var i = 0; i < ventLength; i++) {
-          Vent.getEmotionCount(ventData[i], function (emotionObject) {
+          Vent.getEmotionCount(ventData[i], userId, function (emotionObject) {
             ventData[i].emotionObject = emotionObject;
           });
           if (ventData[i].isAnonymous) {
             delete ventData[i].user;
           }
-          ventData[i].emotion.length=0;
+          ventData[i].emotion.length = 0;
         }
-
+        sails.log.debug(ventData);
         callBack(null, ventData);
       }
     });

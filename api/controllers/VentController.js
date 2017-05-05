@@ -55,7 +55,7 @@ module.exports = {
 
   deleteVent: function (request, response) {
     var userId = request.user_details.id;
-    Vent.doDeleteVent(request.body, userId, function (error, userData) {
+    Vent.doDeleteVent(request.query, userId, function (error, userData) {
       if (error) {
         response.negotiate(error);
       } else {

@@ -154,7 +154,7 @@ module.exports = {
             //     resultVentData.push(ventData[i]);
             //     sails.log.debug('inside if' + ventData[i].emotionObject.myEmotion.emotionValue);
             //   }
-            // });
+            });
             ventData[i].emotion.length = 0;
 
           }

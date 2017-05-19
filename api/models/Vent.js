@@ -145,13 +145,19 @@ module.exports = {
           }, null);
         } else {
           var ventLength = ventData.length;
+          var resultVentData = [];
           for (var i = 0; i < ventLength; i++) {
             Vent.getEmotionCount(ventData[i], userId, function (emotionObject) {
               ventData[i].emotionObject = emotionObject;
+              if(emotionObject.myEmotion.emotionValue != 4){
+                resultVentData.push(ventData[i]);
+              }
             });
             ventData[i].emotion.length = 0;
+
           }
-          callBack(null, ventData);
+
+          callBack(null, resultVentData);
         }
       });
   },

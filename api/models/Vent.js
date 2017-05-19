@@ -149,17 +149,17 @@ module.exports = {
           for (var i = 0; i < ventLength; i++) {
             Vent.getEmotionCount(ventData[i], userId, function (emotionObject) {
               ventData[i].emotionObject = emotionObject;
-              sails.log.debug(ventData[i].emotionObject.myEmotion.emotionValue);
-              if(ventData[i].emotionObject.myEmotion.emotionValue != 4){
-                resultVentData.push(ventData[i]);
-                sails.log.debug('inside if' + ventData[i].emotionObject.myEmotion.emotionValue);
-              }
-            });
+              // sails.log.debug(ventData[i].emotionObject.myEmotion.emotionValue);
+            //   if(ventData[i].emotionObject.myEmotion.emotionValue != 4){
+            //     resultVentData.push(ventData[i]);
+            //     sails.log.debug('inside if' + ventData[i].emotionObject.myEmotion.emotionValue);
+            //   }
+            // });
             ventData[i].emotion.length = 0;
 
           }
 
-          callBack(null, resultVentData);
+          callBack(null, ventData);
         }
       });
   },
@@ -218,17 +218,21 @@ module.exports = {
         }, null);
       } else {
         var ventLength = ventData.length;
+        var resultVentData = [];
         for (var i = 0; i < ventLength; i++) {
           Vent.getEmotionCount(ventData[i], userId, function (emotionObject) {
             ventData[i].emotionObject = emotionObject;
+            // sails.log.debug(ventData[i].emotionObject.myEmotion.emotionValue);
+            if(ventData[i].emotionObject.myEmotion.emotionValue != 4){
+              resultVentData.push(ventData[i]);
+              // sails.log.debug('inside if' + ventData[i].emotionObject.myEmotion.emotionValue);
+            }
           });
-          if (ventData[i].isAnonymous) {
-            delete ventData[i].user;
-          }
           ventData[i].emotion.length = 0;
+
         }
-        sails.log.debug(ventData);
-        callBack(null, ventData);
+
+        callBack(null, resultVentData);
       }
     });
   },

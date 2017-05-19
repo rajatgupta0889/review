@@ -48,6 +48,7 @@ module.exports = {
       if (error) {
         response.negotiate(error);
       } else {
+        sails.log.debug("Return vent list", userList);
         response.json(userList);
       }
     });

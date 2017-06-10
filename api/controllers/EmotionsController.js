@@ -14,6 +14,13 @@ module.exports = {
         response.negotiate(error);
       } else {
         response.json(userData);
+        addNotification(request.body, userId, function (error, userData) {
+          if (error) {
+            response.negotiate(error);
+          } else {
+            response.json(userData);
+          }
+        });
       }
     });
   },

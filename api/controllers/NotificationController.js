@@ -29,5 +29,28 @@ module.exports = {
         console.log("Error sending message:", error);
       });
   },
+
+  getNotification: function (request, response) {
+    var userId = request.user_details.id;
+    Vent.getNotification(request.query, userId, function (error, userList) {
+      if (error) {
+        response.negotiate(error);
+      } else {
+        response.json(userList);
+      }
+    });
+  },
+
+  getAllNotifications: function (request, response) {
+    var userId = request.user_details.id;
+    Vent.getAllNotifications(request.query, userId, function (error, userList) {
+      if (error) {
+        response.negotiate(error);
+      } else {
+        sails.log.debug("Return vent list", userList);
+        response.json(userList);
+      }
+    });
+  }
 };
 

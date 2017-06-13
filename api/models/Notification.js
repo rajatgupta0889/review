@@ -28,12 +28,13 @@ module.exports = {
   addNotification: function (request, callBack) {
 
 
-    Notification.findOne({userId: request.userId, vent: request.vent}).exec(function (error, emotionData) {
+    Notification.findOne({user: request.userId, vent: request.vent}).exec(function (error, emotionData) {
       var payload = {
-        userId: request.userId,
+        user: request.userId,
         vent: request.vent,
         emotionId: request.id
       };
+      sails.log.debug('Pay load',payload);
       if (error) {
         callBack(error, null);
       } else if (!emotionData) {
@@ -42,19 +43,21 @@ module.exports = {
             callBack(error, null);
           } else {
             // Emotions.notifyUser(updateData, ventData);
-            callBack(null, updateData);
+            sails.log.debug('create',updateData);
+            callBack(null,updateData);
           }
         });
       } else {
         Notification.update({
-          userId: request.userId,
+          user: request.userId,
           vent: request.vent
         }, payload, function (error, updateData) {
           if (error) {
             callBack(error, null);
           } else {
             // Emotions.notifyUser(updateData[0], ventData);
-            callBack(null, updateData[0]);
+            sails.log.debug('update',updateData[0]);
+            callBack(null,updateData[0]);
           }
         });
       }

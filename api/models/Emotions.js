@@ -90,9 +90,9 @@ module.exports = {
   },
 
   notifyUser: function (updateData, ventData) {
-    sails.log.debug(ventData, updateData);
-    if(!updateData)
-      return;
+    sails.log.debug('Vent data',ventData);
+    sails.log.debug('Updated Data', updateData);
+
     Notification.addNotification(updateData, function (error, userData) {
       if (error) {
         response.negotiate(error);
@@ -103,7 +103,7 @@ module.exports = {
 
     });
 
-    Notification.find({id: updateData.vent}).populateAll().exec(function (error, notifications) {
+    Notification.find({vent: updateData.vent}).populateAll().exec(function (error, notifications) {
       if (!error || !notifications) {
 
         var payload = {
@@ -112,6 +112,7 @@ module.exports = {
             body: notifications.size + " people have dittoed you"
           }
         };
+        sails.log.debug('Notification',notifications[0]);
         NotificationService.sendToDevice(notifications[0].user.deviceId, payload, null, function (error, response) {
           if (error) {
             console.log("Error sending message:", error);

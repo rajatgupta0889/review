@@ -81,7 +81,7 @@ module.exports = {
             if(emotions.length == 1){
               msg = "1 person has" + msg
             }else {
-              msg = emotions.length + " have" + msg;
+              msg = emotions.length + " people have" + msg;
             }
             var payload = {
               notification: {

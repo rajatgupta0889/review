@@ -74,7 +74,8 @@ module.exports = {
       } else {
         sails.log.debug('notification added');
         Emotions.find({vent: emotion.vent,emotionValue : 1}).populateAll().exec(function (error, emotions) {
-          if (!error && !emotions && emotions.length > 0) {
+          sails.log.debug(emotions);
+          if (!error || !emotions && emotions.length > 0) {
             var payload = {
               notification: {
                 title: "Gargle",

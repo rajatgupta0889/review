@@ -112,7 +112,7 @@ module.exports = {
             body: notifications.size + " people have dittoed you"
           }
         };
-        NotificationService.sendToDevice(notifications[0].userId.deviceId, payload, null, function (error, response) {
+        NotificationService.sendToDevice(notifications[0].user.deviceId, payload, null, function (error, response) {
           if (error) {
             console.log("Error sending message:", error);
           } else {

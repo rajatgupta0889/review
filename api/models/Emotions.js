@@ -99,7 +99,6 @@ module.exports = {
 
       } else {
         sails.log.debug('notification added');
-        Emotions.notifyUser(updateData[0], ventData);
       }
 
     });

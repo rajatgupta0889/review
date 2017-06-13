@@ -75,11 +75,18 @@ module.exports = {
         sails.log.debug('notification added');
         Emotions.find({vent: emotion.vent,emotionValue : 1}).populateAll().exec(function (error, emotions) {
           sails.log.debug(emotions);
+
           if (!error || !emotions && emotions.length > 0) {
+            var msg= " dittoed you.";
+            if(emotions.length == 1){
+              msg = "1 person has" + msg
+            }else {
+              msg = emotions.length + " have" + msg;
+            }
             var payload = {
               notification: {
                 title: "Gargle",
-                body: emotions.length + emotions.length == 1 ? " person" : "people" + " have dittoed you"
+                body: msg
               }
             };
             User.userExistsById(emotions[0].vent.user, function (error, user) {

@@ -43,7 +43,7 @@ module.exports = {
             callBack(error, null);
           } else {
             Emotions.notifyUser(emotion);
-            callBack(null, updateData);
+            callBack(null, emotion);
           }
         });
       } else {

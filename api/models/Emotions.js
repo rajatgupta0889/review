@@ -28,96 +28,73 @@ module.exports = {
   },
 
   doAddEmotion: function (request, userId, callBack) {
-    Vent.findOne({id: request.ventId}).exec(function (error, ventData) {
+    var payload = {
+      userId: userId,
+      vent: request.ventId,
+      emotionValue: request.emotion.emotionValue,
+      emotionMessage: request.emotion.emotionMessage
+    };
+    Emotions.findOne({userId: userId, vent: request.ventId}).exec(function (error, emotionData) {
       if (error) {
         callBack(error, null);
-      } else if (!ventData) {
-        callBack({
-          status: 400,
-          message: "No Vent found"
-        }, null);
-      } else {
-        User.findOne({id: userId}).exec(function (error, userData) {
+      } else if (!emotionData) {
+        Emotions.create(payload, function (error, emotion) {
           if (error) {
             callBack(error, null);
-          } else if (!userData) {
-            callBack({
-              status: 400,
-              message: "No User found"
-            }, null);
           } else {
-            Emotions.findOne({
-              userId: userId,
-              vent: request.ventId
-            }).exec(function (error, emotionData) {
-              var payload = {
-                userId: userId,
-                vent: request.ventId,
-                emotionValue: request.emotion.emotionValue,
-                emotionMessage: request.emotion.emotionMessage
-              };
-              if (error) {
-                callBack(error, null);
-              } else if (!emotionData) {
-                Emotions.create(payload, function (error, updateData) {
-                  if (error) {
-                    callBack(error, null);
-                  } else {
-                    Emotions.notifyUser(updateData, ventData);
-                    callBack(null, updateData);
-
-                  }
-                });
-              } else {
-                Emotions.update({
-                  userId: userId,
-                  vent: request.ventId
-                }, payload, function (error, updateData) {
-                  if (error) {
-                    callBack(error, null);
-                  } else {
-                    sails.log.debug(updateData[0]);
-                    Emotions.notifyUser(updateData[0], ventData);
-                    callBack(null, updateData[0]);
-                  }
-                });
-              }
-            });
+            Emotions.notifyUser(emotion, ventData);
+            callBack(null, updateData);
+          }
+        });
+      } else {
+        Emotions.update({
+          userId: userId,
+          vent: request.ventId
+        }, payload, function (error, updatedEmotion) {
+          if (error) {
+            callBack(error, null);
+          } else {
+            sails.log.debug(updatedEmotion[0]);
+            callBack(null, updatedEmotion[0]);
+            Emotions.notifyUser(updatedEmotion[0], ventData);
           }
         });
       }
     });
+
   },
 
-  notifyUser: function (updateData, ventData) {
-    sails.log.debug('Vent data',ventData);
-    sails.log.debug('Updated Data', updateData);
+  notifyUser: function (emotion, vent) {
+    sails.log.debug('Vent data', vent);
+    sails.log.debug('Updated Data', emotion);
 
-    Notification.addNotification(updateData, function (error, userData) {
+    Notification.addNotification(emotion, function (error, notification) {
       if (error) {
         response.negotiate(error);
 
       } else {
         sails.log.debug('notification added');
-        Notification.find({vent: updateData.vent}).populateAll().exec(function (error, notifications) {
-          if (!error || !notifications) {
-
+        Notification.find({vent: emotion.vent}).exec(function (error, notifications) {
+          if (!error || !notifications || notifications.length > 0) {
             var payload = {
               notification: {
                 title: "Gargle",
-                body: notifications.size + " people have dittoed you"
+                body: notifications.length + " people have dittoed you"
               }
             };
-            sails.log.debug('Notification',notifications[0]);
-            NotificationService.sendToDevice(notifications[0].user.deviceId, payload, null, function (error, response) {
-              if (error) {
-                console.log("Error sending message:", error);
-              } else {
-                console.log("Successfully sent message:", response);
-              }
+            User.userExistsById(vent.user, function (error, user) {
+              NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
+                if (error) {
+                  console.log("Error sending message:", error);
+                } else {
+                  console.log("Successfully sent message:", response);
+                }
+              });
             });
+
+
           } else {
-            sails.log.debug("Error while creating notif")
+            sails.log.debug("Error while finding notif")
           }
         });
       }

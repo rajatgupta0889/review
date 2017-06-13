@@ -79,7 +79,7 @@ module.exports = {
             var payload = {
               notification: {
                 title: "Gargle",
-                body: emotions.length + " people have dittoed you"
+                body: emotions.length + emotions.length == 1 ? 'person' : 'people' + " have dittoed you"
               }
             };
             User.userExistsById(emotions[0].vent.user, function (error, user) {

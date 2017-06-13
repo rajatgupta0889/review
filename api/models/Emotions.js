@@ -99,31 +99,32 @@ module.exports = {
 
       } else {
         sails.log.debug('notification added');
-      }
+        Notification.find({vent: updateData.vent}).populateAll().exec(function (error, notifications) {
+          if (!error || !notifications) {
 
-    });
-
-    Notification.find({vent: updateData.vent}).populateAll().exec(function (error, notifications) {
-      if (!error || !notifications) {
-
-        var payload = {
-          notification: {
-            title: "Gargle",
-            body: notifications.size + " people have dittoed you"
-          }
-        };
-        sails.log.debug('Notification',notifications[0]);
-        NotificationService.sendToDevice(notifications[0].user.deviceId, payload, null, function (error, response) {
-          if (error) {
-            console.log("Error sending message:", error);
+            var payload = {
+              notification: {
+                title: "Gargle",
+                body: notifications.size + " people have dittoed you"
+              }
+            };
+            sails.log.debug('Notification',notifications[0]);
+            NotificationService.sendToDevice(notifications[0].user.deviceId, payload, null, function (error, response) {
+              if (error) {
+                console.log("Error sending message:", error);
+              } else {
+                console.log("Successfully sent message:", response);
+              }
+            });
           } else {
-            console.log("Successfully sent message:", response);
+            sails.log.debug("Error while creating notif")
           }
         });
-      } else {
-        sails.log.debug("Error while creating notif")
       }
+
     });
+
+
   },
 
   doRemoveEmotion: function (request, userId, callBack) {

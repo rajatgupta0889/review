@@ -63,8 +63,9 @@ module.exports = {
                   if (error) {
                     callBack(error, null);
                   } else {
-                    // Emotions.notifyUser(updateData, ventData);
+                    Emotions.notifyUser(updateData, ventData);
                     callBack(null, updateData);
+
                   }
                 });
               } else {
@@ -75,7 +76,7 @@ module.exports = {
                   if (error) {
                     callBack(error, null);
                   } else {
-                    // Emotions.notifyUser(updateData[0], ventData);
+                    Emotions.notifyUser(updateData[0], ventData);
                     callBack(null, updateData[0]);
                   }
                 });
@@ -87,31 +88,40 @@ module.exports = {
     });
   },
 
-  // notifyUser: function (updateData, ventData) {
-  //   sails.log.debug(ventData, updateData);
-  //   User.findOne({id: updateData.userId}).populateAll().exec(function (error, userData) {
-  //     var payload = {
-  //       notification: {
-  //         title: "Vent Out",
-  //         body: userData.name + " " + updateData.emotionMessage + " your Vent"
-  //       },
-  //       data: {
-  //         ventId: updateData.vent
-  //       }
-  //     };
-  //     User.findOne({id: ventData.user}).populateAll().exec(function (error, ventUserData) {
-  //       sails.log.debug(ventUserData);
-  //       NotificationService.sendToDevice(ventUserData.fcmToken, payload, null, function (error, response) {
-  //         if (error) {
-  //           console.log("Error sending message:", error);
-  //         } else {
-  //           console.log("Successfully sent message:", response);
-  //         }
-  //       });
-  //     });
-  //
-  //   });
-  // },
+  notifyUser: function (updateData, ventData) {
+    sails.log.debug(ventData, updateData);
+    Notification.addNotification(updateData, function (error, userData) {
+      if (error) {
+        response.negotiate(error);
+
+      } else {
+        sails.log.debug('notification added');
+        Emotions.notifyUser(updateData[0], ventData);
+      }
+
+    });
+
+    Notification.find({id: updateData.vent}).populateAll().exec(function (error, notifications) {
+      if (!error || !notifications) {
+
+        var payload = {
+          notification: {
+            title: "Gargle",
+            body: notifications.size + " people have dittoed you"
+          }
+        };
+        NotificationService.sendToDevice(notifications[0].userId.deviceId, payload, null, function (error, response) {
+          if (error) {
+            console.log("Error sending message:", error);
+          } else {
+            console.log("Successfully sent message:", response);
+          }
+        });
+      }else{
+        sails.log.debug("Error while creating notif")
+      }
+    });
+  },
 
   doRemoveEmotion: function (request, userId, callBack) {
     Vent.findOne({id: request.ventId}).exec(function (error, ventData) {

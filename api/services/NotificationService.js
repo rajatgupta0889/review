@@ -5,7 +5,7 @@ var admin = require("firebase-admin");
 
 
 
-var serviceAccount = require("/ventout-b1390-firebase-adminsdk-9q3zw-56a0110a98.json");
+var serviceAccount = require("/Users/rajat/Documents/NodeProjects/personal/VentOut-Backend/ventout-b1390-firebase-adminsdk-9q3zw-56a0110a98.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),

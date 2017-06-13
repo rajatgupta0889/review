@@ -1,64 +1,64 @@
 /**
-* Notification.js
-*
-* @description :: TODO: You might write a short summary of how this model works and what it represents here.
-* @docs        :: http://sailsjs.org/#!documentation/models
-*/
+ * Notification.js
+ *
+ * @description :: TODO: You might write a short summary of how this model works and what it represents here.
+ * @docs        :: http://sailsjs.org/#!documentation/models
+ */
 
 module.exports = {
 
   attributes: {
-  	emotionId: {
-      type: 'emotion'
+    emotion: {
+      model: 'emotions'
     },
-
-    userId: {
+    user: {
       model: 'user'
     },
-
     vent: {
       model: 'vent'
+    },
+    notificationType: {
+      type: 'integer',
+      defaultsTo: 0
     }
 
   },
 
 
-  addNotification: function (ventId, userId, callBack) {
+  addNotification: function (request, callBack) {
 
 
-  	Notification.findOne({userId: userId,
-              vent: ventId
-            }).exec(function (error, emotionData) {
-              var payload = {
-                userId: userId,
-                vent: ventId,
-                emotionId: request.emotion
-              };
-              if (error) {
-                callBack(error, null);
-              } else if (!emotionData) {
-                Notification.create(payload, function (error, updateData) {
-                  if (error) {
-                    callBack(error, null);
-                  } else {
-                    // Emotions.notifyUser(updateData, ventData);
-                    callBack(null, updateData);
-                  }
-                });
-              } else {
-                Notification.update({
-                  userId: userId,
-                  vent: request.ventId
-                }, payload, function (error, updateData) {
-                  if (error) {
-                    callBack(error, null);
-                  } else {
-                    // Emotions.notifyUser(updateData[0], ventData);
-                    callBack(null, updateData[0]);
-                  }
-                });
-              }
-            });
+    Notification.findOne({userId: request.userId, vent: request.vent}).exec(function (error, emotionData) {
+      var payload = {
+        userId: request.userId,
+        vent: request.vent,
+        emotionId: request.id
+      };
+      if (error) {
+        callBack(error, null);
+      } else if (!emotionData) {
+        Notification.create(payload, function (error, updateData) {
+          if (error) {
+            callBack(error, null);
+          } else {
+            // Emotions.notifyUser(updateData, ventData);
+            callBack(null, updateData);
+          }
+        });
+      } else {
+        Notification.update({
+          userId: request.userId,
+          vent: request.vent
+        }, payload, function (error, updateData) {
+          if (error) {
+            callBack(error, null);
+          } else {
+            // Emotions.notifyUser(updateData[0], ventData);
+            callBack(null, updateData[0]);
+          }
+        });
+      }
+    });
   },
 };
 

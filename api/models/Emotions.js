@@ -67,22 +67,21 @@ module.exports = {
   notifyUser: function (emotion) {
     // sails.log.debug('Vent data', vent);
     sails.log.debug('Updated Data', emotion);
-
     Notification.addNotification(emotion, function (error, notification) {
       if (error) {
         response.negotiate(error);
 
       } else {
         sails.log.debug('notification added');
-        Notification.find({vent: emotion.vent}).populateAll().exec(function (error, notifications) {
-          if (!error || !notifications || notifications.length > 0) {
+        Emotions.find({vent: emotion.vent,emotionValue : 1}).populateAll().exec(function (error, emotions) {
+          if (!error && !emotions && emotions.length > 0) {
             var payload = {
               notification: {
                 title: "Gargle",
-                body: notifications.length + " people have dittoed you"
+                body: emotions.length + " people have dittoed you"
               }
             };
-            User.userExistsById(notifications[0].vent.user, function (error, user) {
+            User.userExistsById(emotions[0].vent.user, function (error, user) {
               NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
                 if (error) {
                   console.log("Error sending message:", error);
@@ -91,8 +90,6 @@ module.exports = {
                 }
               });
             });
-
-
           } else {
             sails.log.debug("Error while finding notif")
           }
@@ -114,39 +111,24 @@ module.exports = {
           message: "No Vent found"
         }, null);
       } else {
-        User.findOne({id: userId}).exec(function (error, userData) {
+        Emotions.findOne({userId: userId, vent: request.ventId}).exec(function (error, emotionData) {
           if (error) {
             callBack(error, null);
-          } else if (!userData) {
-            callBack({
-              status: 400,
-              message: "No User found"
-            }, null);
           } else {
-            Emotions.findOne({
-              userId: userId,
-              vent: request.ventId
-            }).exec(function (error, emotionData) {
+            Emotions.destroy({userId: userId, vent: request.ventId}).exec(function (error, destroyData) {
               if (error) {
                 callBack(error, null);
-              } else if (!emotionData) {
-                callBack({
-                  status: 400,
-                  message: "No Emotion found"
-                }, null);
               } else {
-                Emotions.destroy({
-                  userId: userId,
-                  vent: request.ventId
-                }).exec(function (error, destroyData) {
-                  if (error) {
-                    callBack(error, null);
-                  } else {
-                    callBack(null, destroyData);
-                  }
-                });
+                callBack(null, destroyData);
               }
             });
+            Notification.destroy({userId: userId, vent: request.ventId}).exec(function (error, destroyData) {
+              if (error) {
+                sails.log.error(error);
+              } else {
+                sails.log.debug('success');
+              }
+            })
           }
         });
       }

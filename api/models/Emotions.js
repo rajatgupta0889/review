@@ -42,7 +42,7 @@ module.exports = {
           if (error) {
             callBack(error, null);
           } else {
-            Emotions.notifyUser(emotion, ventData);
+            Emotions.notifyUser(emotion);
             callBack(null, updateData);
           }
         });
@@ -56,7 +56,7 @@ module.exports = {
           } else {
             sails.log.debug(updatedEmotion[0]);
             callBack(null, updatedEmotion[0]);
-            Emotions.notifyUser(updatedEmotion[0], ventData);
+            Emotions.notifyUser(updatedEmotion[0]);
           }
         });
       }
@@ -64,8 +64,8 @@ module.exports = {
 
   },
 
-  notifyUser: function (emotion, vent) {
-    sails.log.debug('Vent data', vent);
+  notifyUser: function (emotion) {
+    // sails.log.debug('Vent data', vent);
     sails.log.debug('Updated Data', emotion);
 
     Notification.addNotification(emotion, function (error, notification) {
@@ -74,7 +74,7 @@ module.exports = {
 
       } else {
         sails.log.debug('notification added');
-        Notification.find({vent: emotion.vent}).exec(function (error, notifications) {
+        Notification.find({vent: emotion.vent}).populateAll().exec(function (error, notifications) {
           if (!error || !notifications || notifications.length > 0) {
             var payload = {
               notification: {
@@ -82,7 +82,7 @@ module.exports = {
                 body: notifications.length + " people have dittoed you"
               }
             };
-            User.userExistsById(vent.user, function (error, user) {
+            User.userExistsById(notifications[0].vent.user, function (error, user) {
               NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
                 if (error) {
                   console.log("Error sending message:", error);

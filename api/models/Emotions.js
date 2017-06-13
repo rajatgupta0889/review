@@ -73,13 +73,13 @@ module.exports = {
 
       } else {
         sails.log.debug('notification added');
-        Emotions.find({vent: emotion.vent,emotionValue : 1}).populateAll().exec(function (error, emotions) {
+        Emotions.find({vent: emotion.vent, emotionValue: 1}).populateAll().exec(function (error, emotions) {
           sails.log.debug(emotions);
           if (!error || !emotions && emotions.length > 0) {
             var payload = {
               notification: {
                 title: "Gargle",
-                body: emotions.length + emotions.length == 1 ? 'person' : 'people' + " have dittoed you"
+                body: emotions.length + ' ' + emotions.length == 1 ? 'person' : 'people' + " have dittoed you"
               }
             };
             User.userExistsById(emotions[0].vent.user, function (error, user) {

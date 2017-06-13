@@ -76,6 +76,7 @@ module.exports = {
                   if (error) {
                     callBack(error, null);
                   } else {
+                    sails.log.debug(updateData[0]);
                     Emotions.notifyUser(updateData[0], ventData);
                     callBack(null, updateData[0]);
                   }
@@ -90,6 +91,8 @@ module.exports = {
 
   notifyUser: function (updateData, ventData) {
     sails.log.debug(ventData, updateData);
+    if(!updateData)
+      return;
     Notification.addNotification(updateData, function (error, userData) {
       if (error) {
         response.negotiate(error);
@@ -117,7 +120,7 @@ module.exports = {
             console.log("Successfully sent message:", response);
           }
         });
-      }else{
+      } else {
         sails.log.debug("Error while creating notif")
       }
     });

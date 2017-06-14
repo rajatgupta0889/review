@@ -43,12 +43,12 @@ module.exports = {
 
   getAllNotifications: function (request, response) {
     var userId = request.user_details.id;
-    Vent.getAllNotifications(request.query, userId, function (error, userList) {
+    Notification.getAllNotification(request.query,userId, function (error, notifications) {
       if (error) {
         response.negotiate(error);
       } else {
-        sails.log.debug("Return vent list", userList);
-        response.json(userList);
+        sails.log.debug("Return vent list", notifications);
+        response.json(notifications);
       }
     });
   }

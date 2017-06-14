@@ -81,4 +81,5 @@ module.exports.routes = {
    * Notification APIS *
    ****************/
   'GET /vent/api/sendNotificationToUser': 'NotificationController.sendNotificationToUser',
+  'GET /notification/api/getAllNotification':'NotificationController.getAllNotifications'
 };

@@ -34,7 +34,7 @@ module.exports = {
         vent: request.vent,
         emotionId: request.id
       };
-      sails.log.debug('Pay load',payload);
+      sails.log.debug('Pay load', payload);
       if (error) {
         callBack(error, null);
       } else if (!emotionData) {
@@ -43,8 +43,8 @@ module.exports = {
             callBack(error, null);
           } else {
             // Emotions.notifyUser(updateData, ventData);
-            sails.log.debug('create',updateData);
-            callBack(null,updateData);
+            sails.log.debug('create', updateData);
+            callBack(null, updateData);
           }
         });
       } else {
@@ -56,12 +56,55 @@ module.exports = {
             callBack(error, null);
           } else {
             // Emotions.notifyUser(updateData[0], ventData);
-            sails.log.debug('update',updateData[0]);
-            callBack(null,updateData[0]);
+            sails.log.debug('update', updateData[0]);
+            callBack(null, updateData[0]);
           }
         });
       }
     });
   },
+
+  getAllNotification: function (request, userId, cb) {
+    if (!request.createdAt) {
+      request.createdAt = new Date();
+      sails.log.debug(request);
+    }
+    Vent.find({
+      user: userId,
+      createdAt: {'<': request.createdAt}
+    }).limit(10).sort('createdAt DESC').populateAll().exec(function (err, vents) {
+      if (err) {
+        cb(err);
+      } else {
+        var result = [];
+        async.map(vents, getInfo, function (err, resultObj) {
+          if (!err) {
+            console.log('Finished: ' + resultObj);
+            result.push(resultObj);
+          } else {
+            console.log('Error: ' + err);
+          }
+
+        });
+
+        cb(null, result);
+
+        function getInfo(vent, callback) {
+          var resultObj = {};
+          resultObj.vent = vent;
+          var msg = " dittoed you.";
+          if (vent.emotion.length == 1) {
+            msg = "1 person has" + msg
+          } else {
+            msg = vent.emotion.length + " people have" + msg;
+          }
+          resultObj.msg = msg;
+          resultObj.count = vent.emotion.length;
+
+          callback(null, resultObj)
+        }
+      }
+    });
+  }
 };
 

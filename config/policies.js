@@ -62,5 +62,7 @@ module.exports.policies = {
   EmotionsController: {
     '*': ['sessionAuth']
   },
-
+  NotificationController: {
+    '*': ['sessionAuth']
+  },
 };

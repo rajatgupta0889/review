@@ -76,33 +76,25 @@ module.exports = {
       if (err) {
         cb(err);
       } else {
-        // var result = [];
-        async.map(vents, getInfo, function (err, resultObj) {
-          if (!err) {
-            console.log('Finished: ' + resultObj);
-            cb(null, resultObj);
-          } else {
-            console.log('Error: ' + err);
+        var result = [];
+
+        _.each(vents, function (vent) {
+          if(vent.emotion && (vent.emotion.length > 0)) {
+            var resultObj = {};
+            resultObj.vent = vent;
+            var msg = " dittoed you.";
+            if (vent.emotion.length == 1) {
+              msg = "1 person has" + msg
+            } else {
+              msg = vent.emotion.length + " people have" + msg;
+            }
+            resultObj.msg = msg;
+            resultObj.count = vent.emotion.length;
+            result.push(resultObj);
           }
 
         });
-
-
-
-        function getInfo(vent, callback) {
-          var resultObj = {};
-          resultObj.vent = vent;
-          var msg = " dittoed you.";
-          if (vent.emotion.length == 1) {
-            msg = "1 person has" + msg
-          } else {
-            msg = vent.emotion.length + " people have" + msg;
-          }
-          resultObj.msg = msg;
-          resultObj.count = vent.emotion.length;
-
-          callback(null, resultObj)
-        }
+        cb(result);
       }
     });
   }

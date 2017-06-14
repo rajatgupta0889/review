@@ -76,18 +76,18 @@ module.exports = {
       if (err) {
         cb(err);
       } else {
-        var result = [];
+        // var result = [];
         async.map(vents, getInfo, function (err, resultObj) {
           if (!err) {
             console.log('Finished: ' + resultObj);
-            result.push(resultObj);
+            cb(null, resultObj);
           } else {
             console.log('Error: ' + err);
           }
 
         });
 
-        cb(null, result);
+
 
         function getInfo(vent, callback) {
           var resultObj = {};

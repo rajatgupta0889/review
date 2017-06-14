@@ -94,7 +94,7 @@ module.exports = {
           }
 
         });
-        cb(result);
+        cb(null,result);
       }
     });
   }

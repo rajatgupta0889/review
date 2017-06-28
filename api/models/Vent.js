@@ -32,7 +32,6 @@ module.exports = {
     }
 
   },
-
   doUpload: function (request, userId, callBack) {
     request.user = userId;
     User.findOne({id: userId}).exec(function (error, userData) {
@@ -44,24 +43,57 @@ module.exports = {
           message: "No User found"
         }, null);
       } else {
-        Vent.create(request, function (error, ventData) {
-          if (error) {
-            callBack(error, null);
+        Word.getAllBadWords(function (error, badWords) {
+          var allWordsInText = request.text.split(" ");
+          sails.log.debug('Words in text', allWordsInText);
+          var isBadWordPresent = false;
+          _.each(allWordsInText, function (word, index) {
+            sails.log.debug(badWords,word);
+            if (_.contains(badWords, word)) {
+              isBadWordPresent = true;
+            }
+          });
+          sails.log.debug('Is bad word present ', isBadWordPresent);
+          if (isBadWordPresent) {
+
+            callBack({
+              status: 400,
+              message: "Bad word present"
+            }, null);
           } else {
-            callBack(null, ventData);
-            sails.log.debug("ventData : ", ventData);
-            User.userExistsById(ventData.user, function (error, userData) {
-              sails.log.debug("userData : ", userData);
-              if (userData) {
-                userData.ventCount = userData.ventCount + 1;
-                sails.log.debug("userData : ", userData);
-                User.updateUser(userData, function (error, updateUserData) {
-                  sails.log.debug("updateUserData :", updateUserData);
+            Word.getAllGoodWords(function (error, goodWords) {
+              if (!error) {
+                var allWordsInText = request.text.split(" ");
+                _.each(allWordsInText, function (word, index) {
+                  if (!_.contains(goodWords, word)) {
+                    allWordsInText[index] =  new Array(word.length+1).join(' ');
+                  }
+                });
+                var newText = allWordsInText.join(' ');
+                request.newText = newText;
+                Vent.create(request, function (error, ventData) {
+                  if (error) {
+                    callBack(error, null);
+                  } else {
+                    callBack(null, ventData);
+                    sails.log.debug("ventData : ", ventData);
+                    User.userExistsById(ventData.user, function (error, userData) {
+                      sails.log.debug("userData : ", userData);
+                      if (userData) {
+                        userData.ventCount = userData.ventCount + 1;
+                        sails.log.debug("userData : ", userData);
+                        User.updateUser(userData, function (error, updateUserData) {
+                          sails.log.debug("updateUserData :", updateUserData);
+                        });
+                      }
+                    });
+                  }
                 });
               }
             });
           }
         });
+
       }
     });
   },
@@ -150,10 +182,10 @@ module.exports = {
             Vent.getEmotionCount(ventData[i], userId, function (emotionObject) {
               ventData[i].emotionObject = emotionObject;
               // sails.log.debug(ventData[i].emotionObject.myEmotion.emotionValue);
-            //   if(ventData[i].emotionObject.myEmotion.emotionValue != 4){
-            //     resultVentData.push(ventData[i]);
-            //     sails.log.debug('inside if' + ventData[i].emotionObject.myEmotion.emotionValue);
-            //   }
+              //   if(ventData[i].emotionObject.myEmotion.emotionValue != 4){
+              //     resultVentData.push(ventData[i]);
+              //     sails.log.debug('inside if' + ventData[i].emotionObject.myEmotion.emotionValue);
+              //   }
             });
             ventData[i].emotion.length = 0;
 
@@ -223,7 +255,7 @@ module.exports = {
           Vent.getEmotionCount(ventData[i], userId, function (emotionObject) {
             ventData[i].emotionObject = emotionObject;
             // sails.log.debug(ventData[i].emotionObject.myEmotion.emotionValue);
-            if(ventData[i].emotionObject.myEmotion.emotionValue != 4){
+            if (ventData[i].emotionObject.myEmotion.emotionValue != 4) {
               resultVentData.push(ventData[i]);
               // sails.log.debug('inside if' + ventData[i].emotionObject.myEmotion.emotionValue);
             }

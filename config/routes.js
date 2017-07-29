@@ -84,6 +84,9 @@ module.exports.routes = {
   'GET /notification/api/getAllNotification':'NotificationController.getAllNotifications',
 
 
-
+  /****************
+   * Feedback APIS *
+   ****************/
+  'POST /feedback/add': 'FeedbackController.add',
   'GET /readCsv:good?':'WordController.readCsv'
 };

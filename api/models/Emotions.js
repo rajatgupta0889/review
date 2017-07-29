@@ -73,14 +73,14 @@ module.exports = {
 
       } else {
         sails.log.debug('notification added');
-        Emotions.find({vent: emotion.vent,emotionValue : 1}).populateAll().exec(function (error, emotions) {
+        Emotions.find({vent: emotion.vent, emotionValue: 1}).populateAll().exec(function (error, emotions) {
           sails.log.debug(emotions);
 
           if (!error || !emotions && emotions.length > 0) {
-            var msg= " dittoed you.";
-            if(emotions.length == 1){
+            var msg = " dittoed you.";
+            if (emotions.length == 1) {
               msg = "1 person has" + msg
-            }else {
+            } else {
               msg = emotions.length + " people have" + msg;
             }
             var payload = {
@@ -90,13 +90,15 @@ module.exports = {
               }
             };
             User.userExistsById(emotions[0].vent.user, function (error, user) {
-              NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
-                if (error) {
-                  console.log("Error sending message:", error);
-                } else {
-                  console.log("Successfully sent message:", response);
-                }
-              });
+              if (emotions[0].userId != user.id) {
+                NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
+                  if (error) {
+                    console.log("Error sending message:", error);
+                  } else {
+                    console.log("Successfully sent message:", response);
+                  }
+                });
+              }
             });
           } else {
             sails.log.debug("Error while finding notif")

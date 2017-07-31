@@ -90,7 +90,7 @@ module.exports = {
               }
             };
             User.userExistsById(emotions[0].vent.user, function (error, user) {
-              if (emotion.userId.id != user.id) {
+              if (emotions[0].userId.id != user.id) {
                 NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
                   if (error) {
                     console.log("Error sending message:", error);

@@ -161,7 +161,7 @@ module.exports = {
             foundUser.isVerified = true;
             foundUser.active = true;
             cb(null, foundUser);
-            User.updateUser(user, function (err, user) {
+            User.updateUser(foundUser, function (err, updatedUser) {
               if (!err) {
                 sails.log.debug("user is updated successfully");
               } else {

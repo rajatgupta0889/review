@@ -92,7 +92,7 @@ module.exports = {
             User.userExistsById(emotions[0].vent.user, function (error, user) {
               Vent.findOne({id:emotion.vent}).exec(function (error, ventData) {
                 sails.log.debug("Vent Data",ventData);
-                if (ventData.user.id != user.id) {
+                if (ventData.user != user.id) {
                   NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
                     if (error) {
                       console.log("Error sending message:", error);

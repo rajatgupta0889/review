@@ -90,15 +90,17 @@ module.exports = {
               }
             };
             User.userExistsById(emotions[0].vent.user, function (error, user) {
-              if (emotions[0].userId != user.id) {
-                NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
-                  if (error) {
-                    console.log("Error sending message:", error);
-                  } else {
-                    console.log("Successfully sent message:", response);
-                  }
-                });
-              }
+              Vent.findOne({id: request.ventId}).exec(function (error, ventData) {
+                if (ventData.user.id != user.id) {
+                  NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
+                    if (error) {
+                      console.log("Error sending message:", error);
+                    } else {
+                      console.log("Successfully sent message:", response);
+                    }
+                  });
+                }
+              });
             });
           } else {
             sails.log.debug("Error while finding notif")

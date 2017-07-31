@@ -90,7 +90,7 @@ module.exports = {
               }
             };
             User.userExistsById(emotions[0].vent.user, function (error, user) {
-              Vent.findOne({id:vent}).exec(function (error, ventData) {
+              Vent.findOne({id:emotion.vent}).exec(function (error, ventData) {
                 if (ventData.user.id != user.id) {
                   NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
                     if (error) {

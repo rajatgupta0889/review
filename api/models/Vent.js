@@ -180,6 +180,8 @@ module.exports = {
           var resultVentData = [];
           for (var i = 0; i < ventLength; i++) {
             Vent.getEmotionCount(ventData[i], userId, function (emotionObject) {
+              var newText = ventData[i].text;
+              ventData[i].changeText = newText;
               ventData[i].emotionObject = emotionObject;
               // sails.log.debug(ventData[i].emotionObject.myEmotion.emotionValue);
               //   if(ventData[i].emotionObject.myEmotion.emotionValue != 4){
@@ -256,6 +258,8 @@ module.exports = {
             ventData[i].emotionObject = emotionObject;
             // sails.log.debug(ventData[i].emotionObject.myEmotion.emotionValue);
             if (ventData[i].emotionObject.myEmotion.emotionValue != 4) {
+              var newText = ventData[i].text;
+              ventData[i].changeText = newText;
               resultVentData.push(ventData[i]);
               // sails.log.debug('inside if' + ventData[i].emotionObject.myEmotion.emotionValue);
             }

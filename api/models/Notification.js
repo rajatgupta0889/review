@@ -79,12 +79,17 @@ module.exports = {
         var result = [];
 
         _.each(vents, function (vent) {
-          if(vent.emotion && (vent.emotion.length > 0)) {
+          if (vent.emotion && (vent.emotion.length > 0)) {
             var resultObj = {};
             resultObj.vent = vent;
             var msg = " dittoed you.";
             if (vent.emotion.length == 1) {
-              msg = "1 person has" + msg
+              if (vent.emotion[0].userId == userId) {
+                cb(null, []);
+                return
+              } else {
+                msg = "1 person has" + msg
+              }
             } else {
               msg = vent.emotion.length + " people have" + msg;
             }
@@ -94,7 +99,7 @@ module.exports = {
           }
 
         });
-        cb(null,result);
+        cb(null, result);
       }
     });
   }

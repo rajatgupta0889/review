@@ -77,7 +77,6 @@ module.exports = {
         cb(err);
       } else {
         var result = [];
-
         _.each(vents, function (vent) {
             var resultObj = {};
             if (vent.emotion.length == 1) {

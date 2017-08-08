@@ -90,6 +90,8 @@ module.exports = {
               }
             };
             User.userExistsById(emotions[0].vent.user, function (error, user) {
+              sails.log.debug("EMotions object : ",emotions[0]);
+              sails.log.debug("User object : ",user);
               if (emotions[0].userId.id != user.id) {
                 NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
                   if (error) {

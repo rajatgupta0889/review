@@ -78,7 +78,8 @@ module.exports = {
       } else {
         var result = [];
         _.each(vents, function (vent) {
-            var resultObj = {};
+          var resultObj = {};
+          if (vent.emotion.length > 1) {
             if (vent.emotion.length == 1) {
               if (vent.emotion[0].userId == userId) {
               } else {
@@ -89,7 +90,9 @@ module.exports = {
               resultObj.count = vent.emotion.length;
               result.push(resultObj);
             }
+          }
         });
+
         cb(null, result);
       }
     });

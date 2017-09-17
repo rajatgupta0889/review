@@ -285,7 +285,7 @@ module.exports = {
           message: "No Vent found"
         }, null);
       } else {
-        Vent.destroy({user: userId, id: request.ventId}).exec(function (error, ventData) {
+        Vent.destroy({id: request.ventId}).exec(function (error, ventData) {
           if (error) {
             callBack(error, null);
           } else if (!ventData) {

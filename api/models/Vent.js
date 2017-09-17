@@ -276,7 +276,7 @@ module.exports = {
   },
 
   doDeleteVent: function (request, userId, callBack) {
-    Vent.findOne({user: userId, id: request.ventId}).exec(function (error, ventData) {
+    Vent.findOne({id: request.ventId}).exec(function (error, ventData) {
       if (error) {
         callBack(error, null);
       } else if (!ventData) {

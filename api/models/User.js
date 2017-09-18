@@ -229,11 +229,11 @@ module.exports = {
   },
 
   sendNotificationToAdmin : function (ventData) {
-
     User.find({role: "admin"},function (err,users) {
       if(!err){
         if(users){
           _.each(users, function(user) {
+            sails.log.debug("Vent data for admin",ventData);
             sails.log.debug("Admin users",user);
             var payload = {
               notification: {

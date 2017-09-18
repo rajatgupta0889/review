@@ -88,7 +88,11 @@ module.exports = {
                       }
                     });
                     Vent.findOne({id: ventData.id}).populateAll().exec(function (error, newVentData) {
-                      User.sendNotificationToAdmin(newVentData);
+                      if (!error)
+                        User.sendNotificationToAdmin(newVentData);
+                      else {
+                        sails.log.error(error)
+                      }
                     });
                   }
                 });

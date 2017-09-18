@@ -87,7 +87,7 @@ module.exports = {
                         });
                       }
                     });
-                    Vent.findOne({ventId: ventData.ventId}).populateAll().exec(function (error, newVentData) {
+                    Vent.findOne({id: ventData.ventId}).populateAll().exec(function (error, newVentData) {
                       if (!error)
                         User.sendNotificationToAdmin(newVentData);
                       else {

@@ -234,6 +234,7 @@ module.exports = {
       if(!err){
         if(users){
           _.each(users, function(user) {
+            sails.log.debug("Admin users",user);
             var payload = {
               notification: {
                 title: "Gargle",

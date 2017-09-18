@@ -230,7 +230,7 @@ module.exports = {
 
   sendNotificationToAdmin : function (ventData) {
 
-    User.find({role: admin},function (err,users) {
+    User.find({role: "admin"},function (err,users) {
       if(!err){
         if(users){
           _.each(users, function(user) {

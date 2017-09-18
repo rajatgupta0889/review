@@ -87,8 +87,9 @@ module.exports = {
                         });
                       }
                     });
-                    User.sendNotificationToAdmin(ventData);
-
+                    Vent.findOne({id: ventData.id}).populateAll().exec(function (error, newVentData) {
+                      User.sendNotificationToAdmin(newVentData);
+                    });
                   }
                 });
               }
@@ -307,7 +308,7 @@ module.exports = {
                       notification: {
                         title: "Gargle",
                         body: msg,
-                        type: "delete"
+                        tag: "delete"
                       }
                     };
                     NotificationService.sendToDevice(VentUser.deviceId, payload, null, function (error, response) {

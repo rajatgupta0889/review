@@ -238,9 +238,9 @@ module.exports = {
             var payload = {
               notification: {
                 title: "Gargle",
-                body: JSON.stringify(ventData),
-                type: "new_post"
-              }
+                tag: "new_post"
+              },
+              data: ventData
             };
             NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
               if (error) {

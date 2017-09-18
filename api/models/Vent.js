@@ -90,6 +90,8 @@ module.exports = {
                     Vent.findOne({id: ventData.ventId}).populateAll().exec(function (error, newVentData) {
                       if (!error){
                         delete newVentData.emotion;
+                        delete newVentData.isAnonymous;
+                        delete newVentData.isSensitive;
                         User.sendNotificationToAdmin(newVentData);
                       }
                       else {

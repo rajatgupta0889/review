@@ -57,10 +57,11 @@ module.exports = {
       type: 'boolean',
       defaultsTo: false
     },
-    // role: {
-    //   type: 'string',
-    //   defaultsTo: 'user'
-    // },
+    role: {
+      type: 'string',
+      defaultsTo: 'user',
+      enum: ["user", "admin"]
+    },
     isSensitiveMedia: {
       type: 'boolean',
       defaultsTo: false
@@ -225,6 +226,40 @@ module.exports = {
         cb(err);
       }
     });
+  },
+
+  sendNotificationToAdmin : function (ventData) {
+
+    User.find({role: admin},function (err,users) {
+      if(!err){
+        if(users){
+          _.each(users, function(user) {
+            var payload = {
+              notification: {
+                title: "Gargle",
+                body: ventData,
+                type: "new_post"
+              }
+            };
+            NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
+              if (error) {
+                console.log("Error sending message:", error);
+              } else {
+                console.log("Successfully sent message:", response);
+              }
+            });
+          });
+
+        }else {
+          sails.log.debug("No admin user found");
+        }
+      }else{
+        sails.log.error(err)
+      }
+
+    })
+
+
   }
 
 };

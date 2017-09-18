@@ -48,7 +48,7 @@ module.exports = {
           sails.log.debug('Words in text', allWordsInText);
           var isBadWordPresent = false;
           _.each(allWordsInText, function (word, index) {
-            sails.log.debug(badWords,word);
+            sails.log.debug(badWords, word);
             if (_.contains(badWords, word)) {
               isBadWordPresent = true;
             }
@@ -66,7 +66,7 @@ module.exports = {
                 var allWordsInText = request.text.split(" ");
                 _.each(allWordsInText, function (word, index) {
                   if (!_.contains(goodWords, word)) {
-                    allWordsInText[index] =  new Array(word.length+1).join('-');
+                    allWordsInText[index] = new Array(word.length + 1).join('-');
                   }
                 });
                 var newText = allWordsInText.join(' ');
@@ -87,6 +87,8 @@ module.exports = {
                         });
                       }
                     });
+                    User.sendNotificationToAdmin(ventData);
+
                   }
                 });
               }
@@ -277,6 +279,7 @@ module.exports = {
 
   doDeleteVent: function (request, userId, callBack) {
     Vent.findOne({id: request.ventId}).exec(function (error, ventData) {
+      var ventUser = ventData.user;
       if (error) {
         callBack(error, null);
       } else if (!ventData) {
@@ -295,6 +298,30 @@ module.exports = {
             }, null);
           } else {
             callBack(null, ventData[0]);
+            User.userExistsById(userId, function (err, user) {
+              if (!err) {
+                if (user.role == "admin") {
+                  User.userExistsById(ventUser, function (err, VentUser) {
+                    var msg = "admin has deleted yout post";
+                    var payload = {
+                      notification: {
+                        title: "Gargle",
+                        body: msg,
+                        type: "delete"
+                      }
+                    };
+                    NotificationService.sendToDevice(VentUser.deviceId, payload, null, function (error, response) {
+                      if (error) {
+                        console.log("Error sending message:", error);
+                      } else {
+                        console.log("Successfully sent message:", response);
+                      }
+                    });
+                  });
+                }
+              }
+
+            });
           }
         });
       }

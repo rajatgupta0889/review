@@ -235,12 +235,13 @@ module.exports = {
           _.each(users, function(user) {
             sails.log.debug("Vent data for admin",ventData);
             sails.log.debug("Admin users",user);
+            var data ={data:JSON.stringify(ventData)};
             var payload = {
               notification: {
                 title: "Gargle",
                 tag: "new_post"
               },
-              data: ventData
+              data: data
             };
             NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
               if (error) {

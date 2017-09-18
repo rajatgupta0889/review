@@ -88,8 +88,10 @@ module.exports = {
                       }
                     });
                     Vent.findOne({id: ventData.ventId}).populateAll().exec(function (error, newVentData) {
-                      if (!error)
+                      if (!error){
+                        delete newVentData.emotion;
                         User.sendNotificationToAdmin(newVentData);
+                      }
                       else {
                         sails.log.error(error)
                       }

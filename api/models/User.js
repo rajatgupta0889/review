@@ -238,7 +238,7 @@ module.exports = {
             var payload = {
               notification: {
                 title: "Gargle",
-                body: ventData,
+                body: JSON.stringify(ventData),
                 type: "new_post"
               }
             };

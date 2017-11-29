@@ -9,8 +9,8 @@ var serviceAccount = require("/Users/rajat/Documents/NodeProjects/personal/VentO
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: ""
-});
+  databaseURL: "https://ventout-b1390.firebaseio.com"
+},"user");
 
 // admin.initializeApp({
 //   credential: admin.credential.cert({

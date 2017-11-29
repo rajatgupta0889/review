@@ -70,36 +70,46 @@ module.exports = {
     Notification.addNotification(emotion, function (error, notification) {
       if (error) {
         response.negotiate(error);
-
       } else {
         sails.log.debug('notification added');
-        Emotions.find({vent: emotion.vent, emotionValue: 1}).populateAll().exec(function (error, emotions) {
+        Emotions.find({
+          vent: emotion.vent,
+          emotionValue: emotion.emotionValue
+        }).populateAll().exec(function (error, emotions) {
           sails.log.debug("List of emotions for vent ", emotions);
 
           if (!error || !emotions && emotions.length > 0) {
-            var msg = " dittoed you.";
-            if (emotions.length == 1) {
-              msg = "1 person has" + msg
-            } else {
-              msg = emotions.length + " people have" + msg;
-            }
+            var msg =emotions.length;
+
             var payload = {
               data: {
                 title: "Gargle",
-                body: msg
+                body: msg,
+                tag: emotion.emotionValue,
+                emotionMessage: emotion.emotionMessage
               }
             };
             User.userExistsById(emotions[0].vent.user, function (error, user) {
-              sails.log.debug("EMotions object : ",emotions[0]);
-              sails.log.debug("User object : ",user);
+              sails.log.debug("EMotions object : ", emotions[0]);
+              sails.log.debug("User object : ", user);
               if (emotions[0].userId.id != user.id) {
-                NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
-                  if (error) {
-                    console.log("Error sending message:", error);
-                  } else {
-                    console.log("Successfully sent message:", response);
-                  }
-                });
+                if(user.role =="admin") {
+                  NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
+                    if (error) {
+                      console.log("Error sending message:", error);
+                    } else {
+                      console.log("Successfully sent message:", response);
+                    }
+                  });
+                }else{
+                  NotificationServiceUser.sendToDevice(user.deviceId, payload, null, function (error, response) {
+                    if (error) {
+                      console.log("Error sending message:", error);
+                    } else {
+                      console.log("Successfully sent message:", response);
+                    }
+                  });
+                }
               }
             });
           } else {

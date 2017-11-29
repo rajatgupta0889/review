@@ -77,18 +77,46 @@ module.exports = {
                   } else {
                     callBack(null, ventData);
                     sails.log.debug("ventData : ", ventData);
-                    User.userExistsById(ventData.user, function (error, userData) {
-                      sails.log.debug("userData : ", userData);
-                      if (userData) {
-                        userData.ventCount = userData.ventCount + 1;
+                    User.userExistsById(ventData.user, function (error, userDataInVent) {
                         sails.log.debug("userData : ", userData);
-                        User.updateUser(userData, function (error, updateUserData) {
-                          sails.log.debug("updateUserData :", updateUserData);
-                        });
+                        if (userDataInVent) {
+                          userDataInVent.ventCount = userDataInVent.ventCount + 1;
+
+                          if (userDataInVent.ventCount == 50 || userDataInVent.ventCount == 100 || userDataInVent.ventCount == 200) {
+                            var payload = {
+                              data: {
+                                title: "Gargle",
+                                body: userDataInVent.ventCount,
+                                tag: "miles"
+                              }
+                            };
+                            if (userDataInVent.role == "admin") {
+                              NotificationService.sendToDevice(userDataInVent.deviceId, payload, null, function (error, response) {
+                                if (error) {
+                                  console.log("Error sending message:", error);
+                                } else {
+                                  console.log("Successfully sent message:", response);
+                                }
+                              });
+                            } else {
+                              NotificationServiceUser.sendToDevice(userDataInVent.deviceId, payload, null, function (error, response) {
+                                if (error) {
+                                  console.log("Error sending message:", error);
+                                } else {
+                                  console.log("Successfully sent message:", response);
+                                }
+                              });
+                            }
+                          }
+                          sails.log.debug("userData : ", userDataInVent);
+                          User.updateUser(userDataInVent, function (error, updateUserData) {
+                            sails.log.debug("updateUserData :", updateUserData);
+                          });
+                        }
                       }
-                    });
+                    );
                     Vent.findOne({id: ventData.ventId}).populateAll().exec(function (error, newVentData) {
-                      if (!error){
+                      if (!error) {
                         User.sendNotificationToAdmin(newVentData);
                       }
                       else {
@@ -316,13 +344,23 @@ module.exports = {
                         tag: "delete"
                       }
                     };
-                    NotificationService.sendToDevice(VentUser.deviceId, payload, null, function (error, response) {
-                      if (error) {
-                        console.log("Error sending message:", error);
-                      } else {
-                        console.log("Successfully sent message:", response);
-                      }
-                    });
+                    if (ventUser.role == "admin") {
+                      NotificationService.sendToDevice(VentUser.deviceId, payload, null, function (error, response) {
+                        if (error) {
+                          console.log("Error sending message:", error);
+                        } else {
+                          console.log("Successfully sent message:", response);
+                        }
+                      });
+                    } else {
+                      NotificationServiceUser.sendToDevice(VentUser.deviceId, payload, null, function (error, response) {
+                        if (error) {
+                          console.log("Error sending message:", error);
+                        } else {
+                          console.log("Successfully sent message:", response);
+                        }
+                      });
+                    }
                   });
                 }
               }

@@ -9,7 +9,7 @@ var serviceAccount = require("/Users/rajat/Documents/NodeProjects/personal/VentO
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://ventout-b1390.firebaseio.com"
+  databaseURL: "https://gargle-admin.firebaseio.com"
 });
 
 // admin.initializeApp({

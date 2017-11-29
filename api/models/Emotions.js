@@ -84,7 +84,7 @@ module.exports = {
               msg = emotions.length + " people have" + msg;
             }
             var payload = {
-              notification: {
+              data: {
                 title: "Gargle",
                 body: msg
               }

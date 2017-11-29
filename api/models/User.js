@@ -228,19 +228,17 @@ module.exports = {
     });
   },
 
-  sendNotificationToAdmin : function (ventData) {
-    User.find({role: "admin"},function (err,users) {
-      if(!err){
-        if(users){
-          _.each(users, function(user) {
-            sails.log.debug("Vent data for admin",ventData);
-            sails.log.debug("Admin users",user);
-            var data ={data:JSON.stringify(ventData)};
+  sendNotificationToAdmin: function (ventData) {
+    User.find({role: "admin"}, function (err, users) {
+      if (!err) {
+        if (users) {
+          _.each(users, function (user) {
+            sails.log.debug("Vent data for admin", ventData);
+            sails.log.debug("Admin users", user);
+            var data = {data: JSON.stringify(ventData)};
+            data.title = "Gargle"
+            data.tag = "new_post"
             var payload = {
-              notification: {
-                title: "Gargle",
-                tag: "new_post"
-              },
               data: data
             };
             NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
@@ -252,10 +250,10 @@ module.exports = {
             });
           });
 
-        }else {
+        } else {
           sails.log.debug("No admin user found");
         }
-      }else{
+      } else {
         sails.log.error(err)
       }
 

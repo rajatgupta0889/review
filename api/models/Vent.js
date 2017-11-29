@@ -310,7 +310,7 @@ module.exports = {
                   User.userExistsById(ventUser, function (err, VentUser) {
                     var msg = "admin has deleted yout post";
                     var payload = {
-                      notification: {
+                      data: {
                         title: "Gargle",
                         body: msg,
                         tag: "delete"

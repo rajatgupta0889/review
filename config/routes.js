@@ -69,7 +69,7 @@ module.exports.routes = {
   'GET /vent/api/getAllVents': 'VentController.getAllVents',
   'DELETE /vent/api/deleteVent': 'VentController.deleteVent',
 
-  'GET  /vent/api/searchVent' : 'VentController.searchVent',
+  'GET  /vent/api/searchVent': 'VentController.searchVent',
 
   /****************
    * Emotion APIS *
@@ -81,12 +81,19 @@ module.exports.routes = {
    * Notification APIS *
    ****************/
   'GET /vent/api/sendNotificationToUser': 'NotificationController.sendNotificationToUser',
-  'GET /notification/api/getAllNotification':'NotificationController.getAllNotifications',
+  'GET /notification/api/getAllNotification': 'NotificationController.getAllNotifications',
 
 
   /****************
    * Feedback APIS *
    ****************/
   'POST /feedback/add': 'FeedbackController.add',
-  'GET /readCsv:good?':'WordController.readCsv'
+  'GET /readCsv:good?': 'WordController.readCsv',
+
+
+  /****************
+   * Questions APIS *
+   ****************/
+  'POST /questions/add': 'QuestionsController.uploadQuestions',
+  'GET /questions/get': 'QuestionsController.getQuestions'
 };

@@ -194,7 +194,7 @@ module.exports = {
   updateUser: function (user, cb) {
     User.update({"id": user.id}, user, function (err, updatedUser) {
       if (!err) {
-        if (user.length == 0) {
+        if (updatedUser.length == 0) {
           cb({message: "User is not found", status: 400});
         } else {
           sails.log.debug('user found', updatedUser);

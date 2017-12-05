@@ -1,14 +1,14 @@
 /**
  * Created by praful on 06/03/17.
  */
-var user = require("firebase-admin");
+var admin = require("firebase-admin");
 
 
 
 var serviceAccount = require("/Users/rajat/Documents/NodeProjects/personal/VentOut-Backend/vent-userjson.json");
 
-user.initializeApp({
-  credential: user.credential.cert(serviceAccount),
+var otherApp = admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://ventout-b1390.firebaseio.com"
 },"user");
 
@@ -43,7 +43,7 @@ exports.sendToDevice = function (FCMToken, payload, options, callBack) {
     timeToLive: 60 * 60 * 24
   };
 
-  user.messaging().sendToDevice(FCMToken, payload, option)
+  otherApp.messaging().sendToDevice(FCMToken, payload, option)
     .then(function (response) {
       callBack(null, response);
     })

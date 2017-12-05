@@ -8,7 +8,7 @@ var user = require("firebase-admin");
 var serviceAccount = require("/Users/rajat/Documents/NodeProjects/personal/VentOut-Backend/vent-userjson.json");
 
 user.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: user.credential.cert(serviceAccount),
   databaseURL: "https://ventout-b1390.firebaseio.com"
 },"user");
 

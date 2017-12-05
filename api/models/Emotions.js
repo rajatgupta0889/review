@@ -79,7 +79,7 @@ module.exports = {
           sails.log.debug("List of emotions for vent ", emotions);
 
           if (!error || !emotions && emotions.length > 0) {
-            var msg =emotions.length;
+            var msg = emotions.length + "";
 
             var payload = {
               data: {
@@ -93,7 +93,7 @@ module.exports = {
               sails.log.debug("EMotions object : ", emotions[0]);
               sails.log.debug("User object : ", user);
               if (emotions[0].userId.id != user.id) {
-                if(user.role =="admin") {
+                if (user.role == "admin") {
                   NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
                     if (error) {
                       console.log("Error sending message:", error);
@@ -101,7 +101,7 @@ module.exports = {
                       console.log("Successfully sent message:", response);
                     }
                   });
-                }else{
+                } else {
                   NotificationServiceUser.sendToDevice(user.deviceId, payload, null, function (error, response) {
                     if (error) {
                       console.log("Error sending message:", error);

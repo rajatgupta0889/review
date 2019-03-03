@@ -4,7 +4,7 @@
  * @description :: TODO: You might write a short summary of how this model works and what it represents here.
  * @docs        :: http://sailsjs.org/#!documentation/models
  */
-
+const bcrypt = require('bcrypt');
 module.exports = {
 
   attributes: {
@@ -13,31 +13,16 @@ module.exports = {
     },
     email: {
       type: 'string',
+      required: true,
       unique: true
     },
     mobile: {
       type: 'string',
-      required: true,
       unique: true
     },
-    fakeName: {
+    userName: {
       type: 'string',
       unique: true
-    },
-    gender: {
-      type: 'string'
-    },
-    profession: {
-      type: 'string'
-    },
-    hobbies: {
-      type: 'array'
-    },
-    deviceId: {
-      type: 'string'
-    },
-    city: {
-      type: 'string'
     },
     password: {
       type: 'string'
@@ -45,38 +30,14 @@ module.exports = {
     avatar: {
       type: 'string'
     },
-    ventCount: {
-      type: 'integer',
-      defaultsTo: 0
-
-    },
-    passcode: {
-      type: 'string'
-    },
-    active: {
-      type: 'boolean',
-      defaultsTo: false
-    },
     role: {
       type: 'string',
       defaultsTo: 'user',
       enum: ["user", "admin"]
     },
-    isSensitiveMedia: {
-      type: 'boolean',
-      defaultsTo: false
-    },
-    // loginType: {
-    //   type: 'string',
-    //   enum: ['facebook', 'simple', 'google'],
-    //   defaultsTo: 'simple'
-    // },
     isVerified: {
       type: 'boolean',
       defaultsTo: false
-    },
-    otp: {
-      type: 'string'
     }
   },
 
@@ -129,55 +90,66 @@ module.exports = {
     }
   },
 
-  signup: function (mobile, cb) {
-    User.findOne({"mobile": mobile}, function (err, foundUser) {
+  signup: function (user, cb) {
+    User.findOne({email: user.email}, function (err, foundUser) {
       if (!err) {
         if (foundUser) {
-          sails.log.debug('user found ', foundUser);
-          User.generateOTP(foundUser, cb);
+            cb({
+              status:400,
+              error:"User already exists"
+            })
         } else {
-          var user = {};
-          user.mobile = mobile;
-
-          User.create(user, function (err, newUser) {
-            if (!err) {
-              console.log("User created ", newUser);
-              User.generateOTP(newUser, cb);
+          bcrypt.hash(user.password, 10, function(err, hash) {
+            if(!err) {
+              user.password = hash;
+              // Store hash in database
+              User.create(user, function (err, newUser) {
+                if (!err) {
+                  console.log("User created ", newUser);
+                  delete newUser.password;
+                  cb(null,newUser)
+                } else {
+                  cb(err);
+                }
+              });
             }
-            else
-              cb(err);
+          });
+
+        }
+      }else{
+        cb(err);
+      }
+    });
+  },
+  login: function(user,cb){
+    User.findOne({email: user.email}, function (err, foundUser) {
+      if (!err) {
+        if (!foundUser) {
+          cb({
+            status:400,
+            error:"Invalid credentials"
+          });
+        } else {
+          bcrypt.compare(user.password, foundUser.password, function(err, res) {
+            if(res) {
+              // Passwords match
+              delete foundUser.password
+              cb(null,foundUser);
+            } else {
+              // Passwords don't match
+              cb({
+                status:400,
+                error:"Invalid credentials"
+              });
+            }
           });
         }
+      }else{
+        cb(err);
       }
     });
   },
 
-
-  verifyOTP: function (user, cb) {
-    if (user) {
-      User.findOne({"mobile": user.mobile}, function (err, foundUser) {
-        if (!err) {
-          sails.log.debug('user found ', foundUser);
-          if (foundUser.otp == user.otp) {
-            foundUser.isVerified = true;
-            foundUser.active = true;
-            cb(null, foundUser);
-            User.updateUser(foundUser, function (err, updatedUser) {
-              if (!err) {
-                sails.log.debug("user is updated successfully");
-              } else {
-                sails.log.error(err);
-              }
-            });
-          } else {
-            cb({message: "OTP is not valid", status: 401});
-          }
-        } else {
-          cb(err);
-        }
-      });
-    }
-  },
   userExistsById: function (id, cb) {
     //sails.log.debug("inside create: ",user);
     User.findOne({"id": id}, function (err, foundUser) {
@@ -208,58 +180,6 @@ module.exports = {
         }
       }
     });
-  },
-  generateOTP: function (user, cb) {
-
-    // var otp = Math.floor(Math.random() * 9000) + 1000;
-    var otp = '0000';
-    //send otp
-    //sendOTP(otp);
-    user.otp = otp;
-
-    User.updateProfile(user, function (err, updatedUser) {
-      if (!err) {
-        delete updatedUser.otp
-        cb(null, updatedUser);
-      }
-      else {
-        cb(err);
-      }
-    });
-  },
-
-  sendNotificationToAdmin: function (ventData) {
-    User.find({role: "admin"}, function (err, users) {
-      if (!err) {
-        if (users) {
-          _.each(users, function (user) {
-            sails.log.debug("Vent data for admin", ventData);
-            sails.log.debug("Admin users", user);
-            var data = {data: JSON.stringify(ventData)};
-            data.title = "Gargle"
-            data.tag = "new_post"
-            var payload = {
-              data: data
-            };
-            NotificationService.sendToDevice(user.deviceId, payload, null, function (error, response) {
-              if (error) {
-                console.log("Error sending message:", error);
-              } else {
-                console.log("Successfully sent message:", response);
-              }
-            });
-          });
-
-        } else {
-          sails.log.debug("No admin user found");
-        }
-      } else {
-        sails.log.error(err)
-      }
-
-    })
-
-
   }
 
 };

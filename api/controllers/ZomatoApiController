@@ -1,0 +1,54 @@
+module.exports = {
+
+  getCategories: function (req, res) {
+
+    HttpServiceHelper.getRequest("establishments", "?city_id=4", function (err, data) {
+      if (err) {
+        res.negotiate(err);
+      } else {
+        res.json(data);
+      }
+
+    })
+
+  },
+  getCollections: function (req, res) {
+
+    HttpServiceHelper.getRequest("collections", "?city_id=4", function (err, data) {
+      if (err) {
+        res.negotiate(err);
+      } else {
+        res.json(data);
+      }
+
+    })
+
+  },
+  getCuisines: function (req, res) {
+
+    HttpServiceHelper.getRequest("cuisines", "?city_id=4", function (err, data) {
+      if (err) {
+        res.negotiate(err);
+      } else {
+        res.send(data);
+      }
+
+    })
+
+  },
+
+  searchRestaurants: function (req,res) {
+    var params = req.body.params;
+    HttpServiceHelper.getRequest("search", "?"+params, function (err, data) {
+      if (err) {
+        res.negotiate(err);
+      } else {
+        res.json(data);
+      }
+
+    })
+
+  }
+
+
+}

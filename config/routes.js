@@ -49,51 +49,21 @@ module.exports.routes = {
   /****************
    * USER APIS *
    ****************/
-  // 'POST   /user/add': 'UserController.addUser',
   'POST   /user/updateProfile': 'UserController.updateProfile',
   'GET   /user/getProfile/:id?': 'UserController.getProfile',
-  // 'DELETE   /user/delete': 'UserController.deleteUser',
-  // 'POST   /user/login': 'UserController.login',
+  'POST  /api/user/login': 'UserController.login',
   'GET   /user/logout': 'UserController.logout',
-  // 'GET   /user/forgotPassword': 'UserController.forgotPassword',
-  // 'POST   /user/changePassword': 'UserController.changePassword',
-  'POST   /user/verifyOTP': 'UserController.verifyOTP',
-  'POST   /user/signup': 'UserController.signup',
-
-  /****************
-   * Vent APIS *
-   ****************/
-  'POST /vent/api/uploadVent': 'VentController.uploadVent',
-  'GET /vent/api/getMyVentCount': 'VentController.getMyVentCount',
-  'GET /vent/api/getMyVents': 'VentController.getMyVents',
-  'GET /vent/api/getAllVents': 'VentController.getAllVents',
-  'DELETE /vent/api/deleteVent': 'VentController.deleteVent',
-
-  'GET  /vent/api/searchVent': 'VentController.searchVent',
-
-  /****************
-   * Emotion APIS *
-   ****************/
-  'POST /vent/api/addEmotion': 'EmotionsController.addEmotion',
-  'DELETE /vent/api/removeEmotion': 'EmotionsController.removeEmotion',
-
-  /****************
-   * Notification APIS *
-   ****************/
-  'GET /vent/api/sendNotificationToUser': 'NotificationController.sendNotificationToUser',
-  'GET /notification/api/getAllNotification': 'NotificationController.getAllNotifications',
+  'POST  /api/user/signup': 'UserController.signup',
+  'GET /get':'UserController.getData',
 
 
-  /****************
-   * Feedback APIS *
-   ****************/
-  'POST /feedback/add': 'FeedbackController.add',
-  'GET /readCsv:good?': 'WordController.readCsv',
+  'POST /api/addReview': 'ReviewController.addReview',
+  'GET /api/getReviews/:id': 'RestaurantController.getRestaurantReviews',
 
+  'GET /api/getCollections': 'ZomatoController.getCollections',
+  'GET /api/getCategories': 'ZomatoController.getCategories',
+  'GET /api/getCuisines': 'ZomatoController.getCuisines',
+  'POST /api/searchRestaurants': 'ZomatoController.searchRestaurants',
+  'GET /api/getRestaurant/:id': 'ZomatoController.getRestaurantDetails',
 
-  /****************
-   * Questions APIS *
-   ****************/
-  'POST /questions/add': 'QuestionsController.uploadQuestions',
-  'GET /questions/get': 'QuestionsController.getQuestions'
 };

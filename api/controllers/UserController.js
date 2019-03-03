@@ -60,9 +60,8 @@ module.exports = {
   },
 
   signup: function (req, res) {
-    var mobile = req.body.mobile;
-    console.log("Data in req body", mobile);
-    User.signup(mobile, function (err, user) {
+    console.log("Data in req body", req.body);
+    User.signup(req.body, function (err, user) {
       if (err) {
         res.negotiate(err);
       } else {
@@ -70,24 +69,34 @@ module.exports = {
       }
     });
   },
-
-  verifyOTP: function (req, res) {
-    var user = req.body;
-    console.log("Data in req body", user);
-    User.verifyOTP(user, function (err, user) {
+  login: function (req,res) {
+    sails.log.debug(req.body);
+    User.login(req.body, function (err, user) {
       if (err) {
         res.negotiate(err);
       } else {
         Token.sendToken(user, function (err, tokenDetail) {
           if (!err) {
-            res.json(user);
+            res.json(tokenDetail);
           } else {
             res.negotiate(err);
           }
         });
+
       }
     });
   },
+  getData:function (req,res) {
+    sails.log.debug("Data");
+    HttpServiceHelper.getRequest("restaurant","?res_id=18627369",function (err,data) {
+      if(err){
+        res.negotiate(err);
+      }else{
+        res.json(data);
+      }
 
+    });
+
+  }
 };
 

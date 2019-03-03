@@ -1,11 +1,12 @@
 /**
  * TokenController
  *
- * @description :: Server-side logic for managing Tokens
- * @help        :: See http://links.sailsjs.org/docs/controllers
+ * @description :: Server-side actions for handling incoming requests.
+ * @help        :: See https://sailsjs.com/docs/concepts/actions
  */
 
 module.exports = {
-	
+  
+
 };
 
